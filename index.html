@@ -310,6 +310,27 @@ const DEFAULT_RECIPES = [
   { id:'h4', name:'Methocel F50 — Hot Gels', category:'Hydrocolloid Reference', yield:'See ratios below', ingredients:[{amount:'1.5–2%',name:'Methocel F50 (15–20g per 1000g) — standard hot gel. Sets when heated, melts when cold'},{amount:'Note',name:'Reverse-sets: liquid when cold, solid when hot — opposite of all other gels'},{amount:'Key',name:'Must be hydrated in cold liquid (below 50°F / ice bath) before use'}], steps:['Disperse Methocel into cold liquid using high shear (blender/VitaPrep) — it will not hydrate in warm liquid.','Chill mixture in ice bath until fully hydrated and smooth, ~10–15 minutes.','When heated above ~130°F, the mixture sets firm. When cooled, it returns to liquid.','Applications: hot foams, gels that hold shape when served warm, fried gels, hot gel noodles.','See Whipped Crispy Artichokes in this app for a real-world Methocel application.'] },
   { id:'h5', name:'Ultra-Tex 8 — Cold Thickening', category:'Hydrocolloid Reference', yield:'See ratios below', ingredients:[{amount:'1–3%',name:'Ultra-Tex 8 (10–30g per 1000g) — adjust to desired consistency'},{amount:'Note',name:'Modified tapioca starch — thickens without heat, no cooking required'},{amount:'Key',name:'Shear in with VitaPrep or high-speed blender for smooth result'}], steps:['Add Ultra-Tex 8 to finished, cold or room temp preparation.','Shear in using VitaPrep or high-speed blender until smooth — do not hand whisk.','Thickens instantly without heat. Adjust amount to reach desired viscosity.','Very stable — holds well under refrigeration, does not weep or synerese.','See Black Sesame Purée in this app for a real-world Ultra-Tex 8 application.'] },
   { id:'r31', name:'Chocolate Sauce', category:'Sauces', yield:'46 fl oz', ingredients:[{amount:'2 cups',name:'Water'},{amount:'1 cup',name:'Sugar, Granulated'},{amount:'1 cup',name:'Corn Syrup'},{amount:'1.5 cups',name:'Ghirardelli Cocoa Powder'},{amount:'2 oz',name:'Chocolate, 66%'}], steps:['Combine water, sugar, and corn syrup in a saucepan. Bring to a boil, stirring until sugar dissolves.','Whisk in cocoa powder until fully incorporated with no lumps.','Remove from heat; stir in chopped 66% chocolate until melted and smooth.','Reserve warm or refrigerate. Rewarm gently before service.'] },
+  { id:'r32', name:'Duck Confit', category:'Proteins', yield:'~20 legs (5kg batch)',
+    ingredients:[
+      {amount:'100g (2.0%)',name:'Kosher Salt'},
+      {amount:'25g (0.5%)',name:'Sugar, Granulated'},
+      {amount:'50g (1.0%)',name:'Garlic, Smashed'},
+      {amount:'15g (0.3%)',name:'Fresh Thyme'},
+      {amount:'5–6 leaves',name:'Bay Leaf, Crumbled'},
+      {amount:'7–8g',name:'Cracked Black Pepper'},
+      {amount:'~2g (optional)',name:'Orange Zest — OR —'},
+      {amount:'2–3g (optional)',name:'Juniper Berries, Lightly Crushed'},
+      {amount:'5.5–6.5 kg',name:'Duck Fat (enough to fully submerge legs)'},
+    ],
+    steps:[
+      'Mix cure ingredients. Coat legs evenly on all sides. Refrigerate uncovered 24 hours.',
+      'Rinse cure from legs. Pat thoroughly dry.',
+      'Submerge legs completely in duck fat. Shallow pan requires closer to 6.5kg; deep narrow pot closer to 5.5kg. Avoid supplementing with oil — pure duck fat produces noticeably cleaner flavor and mouthfeel.',
+      'Cook at 90–95°C (195–203°F) for ~3 hours. Fat should remain completely calm — no bubbling or frying.',
+      'Done when: meat yields easily, bone wiggles freely, no resistance in connective tissue.',
+      'Cool in fat or remove and crisp skin to order in a hot pan fat-side down.',
+    ]
+  },
   { id:'r25', name:'Caramel Sauce', category:'Sauces', yield:'~3100g', ingredients:[{amount:'3200g',name:'Sugar, Granulated'},{amount:'960g',name:'Water'},{amount:'1920g',name:'Heavy Cream'},{amount:'1360g',name:'Butter, Unsalted, cold diced'},{amount:'68g',name:'Kosher Salt'}], steps:['Make "wet sand" with water and sugar. Make sure no sugar is stuck on sides of pan.','Caramelize sugar until dark golden brown.','Turn off heat. Slowly add heavy cream, stirring carefully. Whisk in cold diced butter. Season with salt. Reserve.'] },
   { id:'r26', name:'Marsala Jus', category:'Sauces', yield:'4 quarts', ingredients:[{amount:'7 lbs',name:'Chicken Backs'},{amount:'1 gal',name:'Chicken Stock'},{amount:'6 lbs',name:'Cremini Mushrooms'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Celery'},{amount:'1 lb',name:'Carrots'},{amount:'4 oz',name:'Tomato Paste'},{amount:'1 oz',name:'Fresh Thyme'},{amount:'1 oz',name:'Fresh Rosemary'},{amount:'¼ bottle',name:'Sheffield Marsala'},{amount:'16 oz',name:'Red Wine (Sangiovese)'},{amount:'3 gal',name:'Water'}], steps:['Roast chicken backs until deeply golden. Reserve.','Caramelize mirepoix vegetables in rondeaux. Add tomato paste; pincé.','Deglaze with Marsala and red wine; reduce by half.','Add roasted bones, stock, water, and aromatics. Simmer low and slow 3–4 hours.','Strain through chinois. Reduce to desired consistency.'] },
   { id:'r27', name:'Ragu d\'Agnello (Lamb Ragu)', category:'Sauces', yield:'2 gallons', ingredients:[{amount:'10 lbs',name:'Ground Lamb'},{amount:'1 can',name:'Crushed Tomatoes'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Carrots'},{amount:'1 lb',name:'Celery'},{amount:'3g',name:'Fresh Rosemary'},{amount:'3.5g',name:'Fresh Thyme'},{amount:'0.05 bunch',name:'Fresh Oregano'},{amount:'15g',name:'Kosher Salt'},{amount:'7g',name:'Black Pepper'},{amount:'6 oz',name:'Tomato Paste'},{amount:'1 qt',name:'Red Wine'}], steps:['In rondeaux, brown lamb until deeply caramelized. Remove any excess fat.','Grind mirepoix in Robot Coupe. Reserve.','Once lamb is browned and excess fat removed, add mirepoix and sweat until vegetables are tender.','Add tomato paste and caramelize. Deglaze with red wine; reduce by half.','Add crushed tomatoes; bring to a simmer. Cover and braise in 375°F oven for 90–120 minutes.','Remove from oven. Season with salt, pepper, lemon juice, crushed red pepper, and Firelli hot sauce.','Cool in shallow pan in walk-in.'] },
@@ -410,7 +431,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31'];
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
