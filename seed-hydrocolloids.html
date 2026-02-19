@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Beck — Seed Hydrocolloids</title>
+<style>
+  body { background: #0d0d0b; color: #e8e4d8; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+  h2 { color: #b5956a; margin-bottom: 10px; }
+  p { color: #8a8474; margin-bottom: 30px; text-align: center; }
+  button { background: #b5956a; border: none; color: #0d0d0b; padding: 16px 40px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  #status { margin-top: 24px; color: #b5956a; font-size: 14px; text-align: center; line-height: 1.8; }
+</style>
+</head>
+<body>
+<h2>Beck Kitchen — One-Time Seed</h2>
+<p>This will add the Hydrocolloid Reference entries to your Firebase database.<br>Only needs to be run once. Open in Safari and tap the button.</p>
+<button id="btn" onclick="runSeed()">Add Hydrocolloid Recipes</button>
+<div id="status"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
+  authDomain: "beck-kitchen-reference.firebaseapp.com",
+  projectId: "beck-kitchen-reference",
+  storageBucket: "beck-kitchen-reference.firebasestorage.app",
+  messagingSenderId: "1076150647462",
+  appId: "1:1076150647462:web:97974b77af810b35225267"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+const HYDRO_RECIPES = [
+  { id:'h1', name:'Agar — Fluid Gel', category:'Hydrocolloid Reference', yield:'See ratios below',
+    ingredients:[
+      {amount:'0.5% / 5g per 1000g',name:'Soft, pourable, loose — good for sauces & fluid applications'},
+      {amount:'1.0% / 10g per 1000g',name:'Sweet spot — sets firm, blends smooth and glossy'},
+      {amount:'1.5% / 15g per 1000g',name:'Stiffer set, very stable — good for piping or structured applications'},
+      {amount:'1.5–2.0% / 15–20g per 1000g',name:'Heat stable — holds on a hot plate, won\'t melt until ~185°F'},
+    ],
+    steps:[
+      'Hydrate agar in cold liquid. Bring to a full boil — must hit 185°F+ to activate properly.',
+      'Season and finish as needed.',
+      'Pour into shallow pan. Let set completely — do not rush.',
+      'Blend in VitaPrep on high until completely smooth and fluid.',
+      'Pass through fine tamis if needed.',
+      'Heat-stable notes: at 1.5–2.0%, gel resists melting on a hot plate (holds to ~185°F vs gelatin which melts at ~95°F). Higher solids content and tight blending improve stability. Avoid high-fat bases.',
+    ]
+  },
+  { id:'h2', name:'Xanthan Gum — Sauce Body', category:'Hydrocolloid Reference', yield:'See ratios below',
+    ingredients:[
+      {amount:'0.1% / 1g per 1000g',name:'Very light — barely noticeable viscosity, just a touch of body'},
+      {amount:'0.2–0.3% / 2–3g per 1000g',name:'Sweet spot — adds body, prevents syneresis, still pours cleanly'},
+      {amount:'0.5%+ / 5g+ per 1000g',name:'Thick, gel-like — starts to feel gluey if pushed further'},
+    ],
+    steps:[
+      'Always shear in — whisk vigorously or use VitaPrep on high. Will not hydrate properly by hand stirring alone.',
+      'Can be added to cold or warm liquid. Hydrates faster in warm.',
+      'Xanthan is shear-thinning: flows more easily under pressure (pouring, squeeze bottle) and thickens back at rest — ideal for plating.',
+      'A little goes a long way. Always easier to add more than to fix an over-xanthaned sauce.',
+      'See Rhubarb Ketchup in this app for a real-world example.',
+    ]
+  },
+  { id:'h3', name:'Gelatin — Ratios & Usage', category:'Hydrocolloid Reference', yield:'See ratios below',
+    ingredients:[
+      {amount:'0.5–1% / 5–10g per 1000g',name:'Soft set — glazes, lightly gelled sauces, velouté body'},
+      {amount:'1.5–2% / 15–20g per 1000g',name:'Firm set — panna cotta, terrines, molded gels'},
+      {amount:'1 sheet silver gelatin',name:'≈ 2.5g. Bloom in cold water 5–10 min before use'},
+      {amount:'Not heat stable',name:'Melts at ~95°F — do not use on hot plates'},
+    ],
+    steps:[
+      'Bloom gelatin sheets in cold water 5–10 minutes until soft and pliable.',
+      'Wring out excess water. Melt into warm (not boiling) liquid — above 140°F destroys setting power.',
+      'For precise work, weigh gelatin rather than counting sheets (silver sheet ≈ 2.5g).',
+      'Set in refrigerator. Allow full chill before unmolding — minimum 2 hours, overnight preferred.',
+      'Not heat stable — will melt above ~95°F. Use agar fluid gel for hot plate applications.',
+    ]
+  },
+  { id:'h4', name:'Methocel F50 — Hot Gels', category:'Hydrocolloid Reference', yield:'See ratios below',
+    ingredients:[
+      {amount:'1.5–2% / 15–20g per 1000g',name:'Standard hot gel — sets when heated, melts when cold'},
+      {amount:'Reverse-sets',name:'Liquid when cold, solid when hot — opposite of all other gels'},
+      {amount:'Critical',name:'Must be hydrated in cold liquid (below 50°F / ice bath) before use'},
+    ],
+    steps:[
+      'Disperse Methocel into cold liquid using high shear (VitaPrep) — will not hydrate in warm liquid.',
+      'Chill in ice bath until fully hydrated and smooth, ~10–15 minutes.',
+      'When heated above ~130°F the mixture sets firm. When cooled, returns to liquid.',
+      'Applications: hot foams, gels that hold shape when served warm, fried gels, hot gel noodles.',
+      'See Whipped Crispy Artichokes in this app for a real-world Methocel application.',
+    ]
+  },
+  { id:'h5', name:'Ultra-Tex 8 — Cold Thickening', category:'Hydrocolloid Reference', yield:'See ratios below',
+    ingredients:[
+      {amount:'1–3% / 10–30g per 1000g',name:'Adjust to desired consistency'},
+      {amount:'Modified tapioca starch',name:'Thickens without heat — no cooking required'},
+      {amount:'Key',name:'Shear in with VitaPrep or high-speed blender for smooth result'},
+    ],
+    steps:[
+      'Add Ultra-Tex 8 to finished, cold or room temp preparation.',
+      'Shear in using VitaPrep or high-speed blender until smooth — do not hand whisk.',
+      'Thickens instantly without heat. Adjust amount to reach desired viscosity.',
+      'Very stable — holds well under refrigeration, does not weep or synerese.',
+      'See Black Sesame Purée in this app for a real-world Ultra-Tex 8 application.',
+    ]
+  },
+];
+
+window.runSeed = async function() {
+  const btn = document.getElementById('btn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.innerHTML = 'Starting…';
+  try {
+    for (const r of HYDRO_RECIPES) {
+      await setDoc(doc(db, 'recipes', r.id), r);
+      status.innerHTML += '<br>✓ ' + r.name;
+    }
+    status.innerHTML += '<br><br><strong style="color:#b5956a">Done! You can close this page.</strong>';
+  } catch(e) {
+    status.innerHTML = 'Error: ' + e.message;
+    btn.disabled = false;
+  }
+};
+</script>
+</body>
+</html>
