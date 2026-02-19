@@ -406,6 +406,20 @@ function grantAdmin() {
   document.getElementById('add-btn').style.display = 'flex';
   document.getElementById('detail-actions').style.display = 'flex';
   initApp();
+  setTimeout(pushMissingRecipes, 2000);
+}
+
+async function pushMissingRecipes() {
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31'];
+  for (const id of ids) {
+    const exists = recipes.find(x => x.id === id);
+    if (!exists) {
+      const r = DEFAULT_RECIPES.find(x => x.id === id);
+      if (r) {
+        try { await setDoc(doc(db, 'recipes', r.id), r); } catch(e) { console.error('push failed', r.id, e); }
+      }
+    }
+  }
 }
 
 // ── SYNC ──────────────────────────────────────────────
