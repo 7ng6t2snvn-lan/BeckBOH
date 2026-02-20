@@ -455,6 +455,19 @@ const DEFAULT_RECIPES = [
       'Season with salt. Pass through fine tamis.',
     ]
   },
+  { id:'r40', name:'Quick Pickle Brine — Fennel', category:'Components', yield:'~500g brine; ready in 20–30 min',
+    ingredients:[
+      {amount:'250g',name:'Water'},
+      {amount:'250g',name:'White Wine Vinegar'},
+      {amount:'50g',name:'Sugar'},
+      {amount:'10g',name:'Kosher Salt'},
+    ],
+    steps:[
+      'Combine all ingredients in a saucepan. Bring to a boil, stirring until sugar and salt are fully dissolved.',
+      'Pour hot brine directly over fennel branch. Cool to room temp, then refrigerate.',
+      'Ready in 20–30 minutes. Better after a few hours.',
+    ]
+  },
   { id:'r25', name:'Caramel Sauce', category:'Sauces', yield:'~3100g', ingredients:[{amount:'3200g',name:'Sugar, Granulated'},{amount:'960g',name:'Water'},{amount:'1920g',name:'Heavy Cream'},{amount:'1360g',name:'Butter, Unsalted, cold diced'},{amount:'68g',name:'Kosher Salt'}], steps:['Make "wet sand" with water and sugar. Make sure no sugar is stuck on sides of pan.','Caramelize sugar until dark golden brown.','Turn off heat. Slowly add heavy cream, stirring carefully. Whisk in cold diced butter. Season with salt. Reserve.'] },
   { id:'r26', name:'Marsala Jus', category:'Sauces', yield:'4 quarts', ingredients:[{amount:'7 lbs',name:'Chicken Backs'},{amount:'1 gal',name:'Chicken Stock'},{amount:'6 lbs',name:'Cremini Mushrooms'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Celery'},{amount:'1 lb',name:'Carrots'},{amount:'4 oz',name:'Tomato Paste'},{amount:'1 oz',name:'Fresh Thyme'},{amount:'1 oz',name:'Fresh Rosemary'},{amount:'¼ bottle',name:'Sheffield Marsala'},{amount:'16 oz',name:'Red Wine (Sangiovese)'},{amount:'3 gal',name:'Water'}], steps:['Roast chicken backs until deeply golden. Reserve.','Caramelize mirepoix vegetables in rondeaux. Add tomato paste; pincé.','Deglaze with Marsala and red wine; reduce by half.','Add roasted bones, stock, water, and aromatics. Simmer low and slow 3–4 hours.','Strain through chinois. Reduce to desired consistency.'] },
   { id:'r27', name:'Ragu d\'Agnello (Lamb Ragu)', category:'Sauces', yield:'2 gallons', ingredients:[{amount:'10 lbs',name:'Ground Lamb'},{amount:'1 can',name:'Crushed Tomatoes'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Carrots'},{amount:'1 lb',name:'Celery'},{amount:'3g',name:'Fresh Rosemary'},{amount:'3.5g',name:'Fresh Thyme'},{amount:'0.05 bunch',name:'Fresh Oregano'},{amount:'15g',name:'Kosher Salt'},{amount:'7g',name:'Black Pepper'},{amount:'6 oz',name:'Tomato Paste'},{amount:'1 qt',name:'Red Wine'}], steps:['In rondeaux, brown lamb until deeply caramelized. Remove any excess fat.','Grind mirepoix in Robot Coupe. Reserve.','Once lamb is browned and excess fat removed, add mirepoix and sweat until vegetables are tender.','Add tomato paste and caramelize. Deglaze with red wine; reduce by half.','Add crushed tomatoes; bring to a simmer. Cover and braise in 375°F oven for 90–120 minutes.','Remove from oven. Season with salt, pepper, lemon juice, crushed red pepper, and Firelli hot sauce.','Cool in shallow pan in walk-in.'] },
@@ -555,7 +568,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39'];
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
