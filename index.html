@@ -365,6 +365,44 @@ const DEFAULT_RECIPES = [
       'Reserve refrigerated. Re-shear briefly if separation occurs.',
     ]
   },
+  { id:'r35', name:'Asian-Influenced Royale Custard (Savory Pain Perdu)', category:'Components', yield:'~8–10 thick slices',
+    ingredients:[
+      {amount:'500g',name:'Heavy Cream'},
+      {amount:'130g',name:'Whole Eggs (~2.5–3 eggs)'},
+      {amount:'20g',name:'Egg Yolks (optional but recommended)'},
+      {amount:'14g',name:'White Shoyu or Light Soy'},
+      {amount:'8g',name:'Mirin'},
+      {amount:'1–2g',name:'Sesame Oil (do not exceed)'},
+      {amount:'pinch',name:'Salt'},
+      {amount:'optional',name:'Thin slice fresh ginger or tiny pinch white pepper'},
+    ],
+    steps:[
+      'Gently warm cream with ginger if using. Steep 10–15 minutes, strain, cool slightly.',
+      'Whisk eggs and yolk gently — avoid aeration.',
+      'Season cream with shoyu, mirin, sesame oil, and salt. Taste for balance.',
+      'Combine cream and eggs. Briefly blend 5–8 seconds on lowest speed to homogenize.',
+      'Strain through fine chinois. Rest 10–20 minutes before using.',
+      'Pain Perdu use: dip bread briefly 3–5 seconds per side. Cook gently in butter over medium-low heat.',
+    ]
+  },
+  { id:'r36', name:'Bosc Pear Jam (Foie Gras Optimized)', category:'Components', yield:'~1000g yield; no pectin',
+    ingredients:[
+      {amount:'1000g',name:'Bosc Pears, peeled, small dice'},
+      {amount:'380–450g',name:'Sugar'},
+      {amount:'35g',name:'Lemon Juice'},
+      {amount:'pinch',name:'Salt'},
+      {amount:'40–60g (optional)',name:'Sauternes-style or dry white wine'},
+      {amount:'optional',name:'Tiny pinch white pepper or restrained vanilla'},
+    ],
+    steps:[
+      'Toss pears with sugar, salt, and lemon juice. Rest 30–45 minutes.',
+      'Cook in wide pan over medium heat — do not rush.',
+      'Simmer until pears fully soften and liquid reduces.',
+      'Target temperature: 103–105°C (217–221°F).',
+      'Lightly blend for spreadable texture if desired.',
+      'Add optional wine or spice at finish. Adjust acidity as needed.',
+    ]
+  },
   { id:'r25', name:'Caramel Sauce', category:'Sauces', yield:'~3100g', ingredients:[{amount:'3200g',name:'Sugar, Granulated'},{amount:'960g',name:'Water'},{amount:'1920g',name:'Heavy Cream'},{amount:'1360g',name:'Butter, Unsalted, cold diced'},{amount:'68g',name:'Kosher Salt'}], steps:['Make "wet sand" with water and sugar. Make sure no sugar is stuck on sides of pan.','Caramelize sugar until dark golden brown.','Turn off heat. Slowly add heavy cream, stirring carefully. Whisk in cold diced butter. Season with salt. Reserve.'] },
   { id:'r26', name:'Marsala Jus', category:'Sauces', yield:'4 quarts', ingredients:[{amount:'7 lbs',name:'Chicken Backs'},{amount:'1 gal',name:'Chicken Stock'},{amount:'6 lbs',name:'Cremini Mushrooms'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Celery'},{amount:'1 lb',name:'Carrots'},{amount:'4 oz',name:'Tomato Paste'},{amount:'1 oz',name:'Fresh Thyme'},{amount:'1 oz',name:'Fresh Rosemary'},{amount:'¼ bottle',name:'Sheffield Marsala'},{amount:'16 oz',name:'Red Wine (Sangiovese)'},{amount:'3 gal',name:'Water'}], steps:['Roast chicken backs until deeply golden. Reserve.','Caramelize mirepoix vegetables in rondeaux. Add tomato paste; pincé.','Deglaze with Marsala and red wine; reduce by half.','Add roasted bones, stock, water, and aromatics. Simmer low and slow 3–4 hours.','Strain through chinois. Reduce to desired consistency.'] },
   { id:'r27', name:'Ragu d\'Agnello (Lamb Ragu)', category:'Sauces', yield:'2 gallons', ingredients:[{amount:'10 lbs',name:'Ground Lamb'},{amount:'1 can',name:'Crushed Tomatoes'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Carrots'},{amount:'1 lb',name:'Celery'},{amount:'3g',name:'Fresh Rosemary'},{amount:'3.5g',name:'Fresh Thyme'},{amount:'0.05 bunch',name:'Fresh Oregano'},{amount:'15g',name:'Kosher Salt'},{amount:'7g',name:'Black Pepper'},{amount:'6 oz',name:'Tomato Paste'},{amount:'1 qt',name:'Red Wine'}], steps:['In rondeaux, brown lamb until deeply caramelized. Remove any excess fat.','Grind mirepoix in Robot Coupe. Reserve.','Once lamb is browned and excess fat removed, add mirepoix and sweat until vegetables are tender.','Add tomato paste and caramelize. Deglaze with red wine; reduce by half.','Add crushed tomatoes; bring to a simmer. Cover and braise in 375°F oven for 90–120 minutes.','Remove from oven. Season with salt, pepper, lemon juice, crushed red pepper, and Firelli hot sauce.','Cool in shallow pan in walk-in.'] },
@@ -465,7 +503,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34'];
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
