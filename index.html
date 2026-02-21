@@ -545,6 +545,27 @@ const DEFAULT_RECIPES = [
   { id:'r28', name:'Tomato Fennel Broth', category:'Sauces', yield:'5.5 quarts', ingredients:[{amount:'725g',name:'Fresh Fennel'},{amount:'465g',name:'Yellow Onions'},{amount:'1 can',name:'Whole Tomatoes'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 T',name:'Black Pepper'},{amount:'1.5 tsp',name:'Calabrian Chili'},{amount:'2 ea',name:'Fresh Oranges'},{amount:'6 oz',name:'Dry White Wine'},{amount:'½ gal',name:'Water'}], steps:['Sweat fennel and onions until soft and translucent.','Add Calabrian chili; cook briefly.','Add white wine; reduce by half.','Add tomatoes, water, orange zest and juice. Simmer 30–45 minutes.','Season with salt and pepper. Strain or leave rustic as needed.'] },
   { id:'r29', name:'House Bread — Soft Italian', category:'Breads & Doughs', yield:'30 loaves (175g each)', ingredients:[{amount:'1683g',name:'Hi-Gluten Flour'},{amount:'1683g',name:'Pizza Flour'},{amount:'2154g',name:'Water'},{amount:'135g',name:'Sugar, Granulated'},{amount:'135g',name:'Blend Oil 75/25'},{amount:'67g',name:'Kosher Salt'},{amount:'101g',name:'Powdered Milk'},{amount:'44g',name:'Instant Dry Yeast'}], steps:['Combine all dry ingredients in floor mixer with dough hook. Add water.','Mix on low 3 minutes. Mix on medium 5 minutes.','Bulk ferment until doubled.','Divide into 175g balls. Shape torpedo. Proof 45–60 minutes.','Bake at 375°F for 14–17 minutes.','Remove from oven; liberally brush with bread oil and Pecorino Romano. Return to oven 2 minutes.'] },
   { id:'r30', name:'Corfini Braised Pork Shank', category:'Proteins', yield:'17 portions', ingredients:[{amount:'16.5 lbs',name:'Corfini Pork Shanks'},{amount:'3 qt',name:'Chicken Stock'},{amount:'1 lb',name:'Carrots'},{amount:'1 lb',name:'Celery'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'3 oz',name:'Tomato Paste'},{amount:'1 liter',name:'Sangiovese Red Wine'}], steps:['Season shanks generously; sear in rondeaux until deeply browned on all sides. Remove and reserve.','In same pan, caramelize mirepoix. Add tomato paste; pincé until fond develops.','Deglaze with red wine; reduce by half. Add chicken stock.','Return shanks to braising liquid. Liquid should come halfway up shanks.','Cover and braise in 325°F oven until fork tender, approximately 2.5–3 hours.','Remove shanks carefully. Strain and reduce braising liquid to sauce consistency. Adjust seasoning.'] },
+  { id:'r41', name:'Braised Lamb Necks', category:'Proteins', yield:'2 lamb necks (~3 lb / 1360g)',
+    ingredients:[
+      {amount:'2 ea (~1360g)',name:'Lamb Necks'},
+      {amount:'275–340g',name:'Mirepoix (onion, carrot, celery)'},
+      {amount:'500ml',name:'Red Wine'},
+      {amount:'500ml',name:'Water'},
+      {amount:'250ml',name:'Lamb Demi'},
+      {amount:'20–25g',name:'Tomato Paste'},
+      {amount:'2–3 sprigs',name:'Fresh Thyme'},
+      {amount:'11–13g',name:'Kosher Salt (initial seasoning)'},
+    ],
+    steps:[
+      'Season lamb necks generously with salt. Sear in a heavy-bottomed pan or rondeaux over high heat until deeply browned on all sides. Remove and reserve.',
+      'In same pan, sweat mirepoix until softened and lightly caramelized.',
+      'Add tomato paste; cook until pincé, 2–3 minutes.',
+      'Deglaze with red wine; reduce by half, scraping up fond.',
+      'Add water and lamb demi. Return necks to pan — liquid should come roughly halfway up.',
+      'Add thyme sprigs. Cover tightly and braise at 300–325°F until completely tender and meat yields easily from bone, approximately 3–3.5 hours.',
+      'Remove necks carefully. Strain braising liquid; reduce to desired sauce consistency. Adjust seasoning before service.',
+    ]
+  },
   { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden', ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}], steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.'] },
 ];
 
@@ -643,7 +664,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40'];
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
