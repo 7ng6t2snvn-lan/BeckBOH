@@ -566,7 +566,23 @@ const DEFAULT_RECIPES = [
       'Remove necks carefully. Strain braising liquid; reduce to desired sauce consistency. Adjust seasoning before service.',
     ]
   },
-  { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden', ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}], steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.'] },
+  { id:'r42', name:'Milk Crumbs', category:'Components', yield:'Small batch',
+    ingredients:[
+      {amount:'¼ cup + 1 T',name:'Nonfat Milk Powder (divided)'},
+      {amount:'2 T',name:'All-Purpose Flour'},
+      {amount:'1 T',name:'Cornstarch'},
+      {amount:'1½ tsp',name:'Sugar, Granulated'},
+      {amount:'⅛ tsp',name:'Salt'},
+      {amount:'1½ T',name:'Unsalted Butter, melted'},
+      {amount:'¼ cup',name:'White Chocolate, melted'},
+    ],
+    steps:[
+      'Combine 2 T + 1 tsp milk powder with flour, cornstarch, sugar, and salt. Mix in melted butter until clumps form.',
+      'Spread on a parchment-lined sheet pan. Bake at 225°F for approximately 8 minutes until dry but not browned.',
+      'Cool 10 minutes. Toss with melted white chocolate and remaining milk powder until coated.',
+      'Spread back on pan and allow to set completely before storing.',
+    ]
+  }, category:'Components', yield:'Fry at 375°F until golden', ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}], steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.'] },
 ];
 
 // ── STATE ─────────────────────────────────────────────
@@ -664,7 +680,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41'];
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
@@ -891,12 +907,35 @@ window.switchTab = function(tab) {
   }
 };
 
+function playMessageSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.15);
+    g.gain.setValueAtTime(0.25, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    o.start(ctx.currentTime);
+    o.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
 function initChat() {
   const q = query(collection(db, 'chat_messages'), orderBy('ts', 'asc'), limit(200));
+  let isFirstLoad = true;
   chatUnsubscribe = onSnapshot(q, (snapshot) => {
     renderChatMessages(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+    const myName = chatUser ? (chatUser.displayName || chatUser.email.split('@')[0]) : '';
+    if (!isFirstLoad) {
+      const newMsgs = snapshot.docChanges().filter(c => c.type === 'added' && c.doc.data().sender !== myName);
+      if (newMsgs.length > 0) playMessageSound();
+    }
+    isFirstLoad = false;
     if (currentTab !== 'chat') {
-      const myName = chatUser ? (chatUser.displayName || chatUser.email.split('@')[0]) : '';
       const newUnread = snapshot.docs.filter(d => {
         const ts = d.data().ts?.toMillis ? d.data().ts.toMillis() : 0;
         return ts > lastSeenTimestamp && d.data().sender !== myName;
