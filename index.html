@@ -1239,15 +1239,22 @@ window.handlePrepUpload = async function(event) {
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
 
+    const SECTION_KEYWORDS = ['proteins','sauces','purees','garnishes','breads','misc','notes','desserts','components','stocks','sides','fish','meat','vegetable','dairy','starch'];
     const items = [];
     rows.forEach(row => {
       const name = row[0] ? String(row[0]).trim() : null;
       if (!name) return;
       const qty = row[1] !== null && row[1] !== undefined ? String(row[1]).trim() : '';
       const unit = row[2] ? String(row[2]).trim() : '';
-      // Detect section headers — no qty/unit and title-case or all-caps
-      const isSection = (!qty || qty === '') && (!unit || unit === '');
-      items.push({ name, qty: isSection ? '' : qty, unit: isSection ? '' : unit, isSection, status: 'needed' });
+      // Detect section headers:
+      // 1. No qty and no unit
+      // 2. Name matches known section keywords (case-insensitive)
+      // 3. Has qty but no unit AND name looks like a category (short, title-case, no numbers)
+      const nameLower = name.toLowerCase();
+      const matchesKeyword = SECTION_KEYWORDS.some(k => nameLower.includes(k));
+      const noUnit = !unit || unit === '';
+      const isSection = (!qty && noUnit) || matchesKeyword || (noUnit && name.length < 40 && !/\d/.test(name) && name === name.replace(/[a-z]/g, c => c) + name.replace(/[A-Z]/g, c => c));
+      items.push({ name, qty: isSection ? '' : qty, unit: isSection ? '' : unit, isSection: !!isSection, status: 'needed' });
     });
 
     const title = file.name.replace(/\.(xlsx|xls)$/i, '');
