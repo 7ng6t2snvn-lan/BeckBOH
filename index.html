@@ -180,6 +180,33 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .name-sheet { background: var(--surface); border-radius: 20px; width: 100%; max-width: 360px; padding: 28px 20px; }
 .name-sheet-title { font-family: var(--serif); font-size: 24px; font-weight: 300; margin-bottom: 6px; }
 .name-sheet-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+
+/* PREP LIST */
+#prep-view { display: none; flex-direction: column; height: calc(100dvh - 58px - 41px); overflow-y: auto; }
+#prep-view.active { display: flex; }
+.prep-header-bar { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0; }
+.prep-title-text { font-family: var(--serif); font-size: 18px; font-weight: 300; }
+.prep-date-text { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; }
+.prep-upload-btn { display: flex; align-items: center; gap: 6px; background: var(--accent); color: #0d0d0b; border: none; border-radius: 8px; padding: 7px 12px; font-family: var(--sans); font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; }
+.prep-upload-btn:active { opacity: 0.8; }
+.prep-section-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); padding: 14px 16px 6px; }
+.prep-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+.prep-item:active { background: var(--surface); }
+.prep-status-pill { flex-shrink: 0; min-width: 90px; padding: 4px 10px; border-radius: 20px; font-size: 11px; letter-spacing: 0.06em; text-align: center; font-weight: 500; transition: all 0.15s; }
+.prep-status-pill.needed { background: rgba(192,97,74,0.15); color: #e07060; border: 1px solid rgba(192,97,74,0.3); }
+.prep-status-pill.inprogress { background: rgba(181,149,106,0.15); color: var(--accent); border: 1px solid var(--accent-dim); }
+.prep-status-pill.done { background: rgba(80,160,100,0.15); color: #6bc48a; border: 1px solid rgba(80,160,100,0.3); }
+.prep-item-name { flex: 1; font-size: 14px; color: var(--text); }
+.prep-item-name.done-text { color: var(--text-muted); text-decoration: line-through; }
+.prep-item-qty { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+.prep-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px 24px; text-align: center; }
+.prep-empty-icon { font-size: 36px; }
+.prep-empty-title { font-family: var(--serif); font-size: 20px; color: var(--text-dim); }
+.prep-empty-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+.prep-reset-btn { margin: 12px 16px; padding: 10px; border-radius: 10px; border: 1px solid var(--border2); background: transparent; color: var(--danger); font-family: var(--sans); font-size: 13px; cursor: pointer; width: calc(100% - 32px); }
+.prep-reset-btn:active { background: rgba(192,97,74,0.1); }
+.prep-progress-bar { height: 3px; background: var(--border); flex-shrink: 0; }
+.prep-progress-fill { height: 100%; background: #6bc48a; transition: width 0.3s ease; }
 </style>
 </head>
 <body>
@@ -236,7 +263,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
     </header>
     <div class="nav-tabs">
       <div class="nav-tab active" id="tab-recipes" onclick="switchTab('recipes')">Recipes</div>
-      <div class="nav-tab" id="tab-chat" onclick="switchTab('chat')">Kitchen Chat <span class="chat-badge" id="chat-unread-badge" style="display:none;"></span></div>
+      <div class="nav-tab" id="tab-prep" onclick="switchTab('prep')">Prep List</div>
+      <div class="nav-tab" id="tab-chat" onclick="switchTab('chat')">Chat <span class="chat-badge" id="chat-unread-badge" style="display:none;"></span></div>
     </div>
     <div class="search-bar" id="recipe-search-bar">
       <div class="search-wrap">
@@ -247,6 +275,30 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
     <div class="category-scroll" id="cat-pills"></div>
     <div class="recipe-list" id="recipe-list">
       <div class="loading-state"><div class="loading-spinner"></div></div>
+    </div>
+
+    <!-- PREP LIST VIEW -->
+    <div id="prep-view">
+      <div class="prep-header-bar">
+        <div>
+          <div class="prep-title-text" id="prep-title-text">Today's Prep</div>
+          <div class="prep-date-text" id="prep-date-text"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="prep-upload-btn" id="prep-upload-btn" style="display:none;" onclick="document.getElementById('prep-file-input').click()">
+            ↑ Upload Excel
+          </button>
+          <input type="file" id="prep-file-input" accept=".xlsx,.xls" style="display:none;" onchange="handlePrepUpload(event)">
+        </div>
+      </div>
+      <div class="prep-progress-bar"><div class="prep-progress-fill" id="prep-progress-fill" style="width:0%"></div></div>
+      <div id="prep-list-container">
+        <div class="prep-empty">
+          <div class="prep-empty-icon">📋</div>
+          <div class="prep-empty-title">No Prep List</div>
+          <div class="prep-empty-sub" id="prep-empty-sub">Ask the chef to upload today's prep list.</div>
+        </div>
+      </div>
     </div>
 
     <!-- CHAT VIEW -->
@@ -323,6 +375,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, setDoc, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
@@ -336,6 +389,7 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
+const storage = getStorage(fbApp);
 const provider = new GoogleAuthProvider();
 
 // ── LOGO (embedded) ──────────────────────────────────
@@ -583,7 +637,80 @@ const DEFAULT_RECIPES = [
       'Spread back on pan and allow to set completely before storing.',
     ]
   },
-  { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden', ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}], steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.'] },
+  { id:'r43', name:'Fennel – Buttermilk Purée', category:'Purees & Emulsions', yield:'Per 1000g raw fennel',
+    ingredients:[
+      {amount:'1000g',name:'Fennel, trimmed and thinly sliced'},
+      {amount:'75g',name:'Butter or neutral oil (for sweating)'},
+      {amount:'600g',name:'Buttermilk, warm'},
+      {amount:'22g',name:'Ultra-Tex 8'},
+      {amount:'10–12g',name:'Kosher Salt'},
+      {amount:'optional',name:'Small squeeze lemon juice OR few drops white balsamic'},
+    ],
+    steps:[
+      'Trim fennel — remove stalks and woody core. Slice thin for even cooking.',
+      'Sweat fennel gently in butter or oil over medium-low heat. Target: fully soft, completely pale, no browning at all. Browning muddies the flavor and fights the buttermilk. Cook until completely tender — this step determines final silkiness more than the blender.',
+      'While fennel is still warm, add to blender with buttermilk, fat, and salt. Blend on high until absolutely smooth. If you see any texture at all, keep blending. Proper purée = glossy, zero graininess.',
+      'Reduce blender to medium speed until a visible vortex forms. Slowly rain in Ultra-Tex 8 — do not dump. Watch the texture shift: liquid → sauce → pudding. Stop as soon as purée holds soft peaks, moves like loose pastry cream, and has no elasticity or gumminess.',
+      'Taste. If flavor feels round or dull, add a tiny squeeze of lemon or a few drops of white balsamic. Acid sharpens the fennel and lifts the buttermilk significantly.',
+      'Texture check: should sit on a spoon without running, relax slowly when nudged, and pipe cleanly without stiffness. Too loose → add 1–2g more Ultra-Tex. Too thick → splash of buttermilk. Ultra-Tex is extremely responsive — adjust in small increments.',
+    ]
+  },
+  { id:'r44', name:'Cucumber Water', category:'Components', yield:'Pass through fine chinois',
+    ingredients:[{amount:'4 ea',name:'Cucumbers, rough chopped'},{amount:'2 T',name:'Kosher Salt'}],
+    steps:['Rough chop cucumbers.','Place in blender. Add salt.','Purée on high speed until smooth.','Pass through fine mesh chinois. Reserve cold.']
+  },
+  { id:'r45', name:'Nasturtium Vinegar', category:'Components', yield:'~2.75 cups',
+    ingredients:[{amount:'2 cups',name:'Distilled Vinegar'},{amount:'¾ cup',name:'Sugar, Granulated'},{amount:'2 tsp',name:'Shallot, minced'},{amount:'150 ea',name:'Nasturtium Blossoms'},{amount:'to taste',name:'Salt'}],
+    steps:['Place blossoms and shallots in a stainless steel or glass bowl.','Bring vinegar and sugar to a simmer, stirring until sugar dissolves.','Pour hot vinegar mixture over blossoms. Steep 15 minutes.','Place over ice bath to cool. Reserve for vinaigrette.']
+  },
+  { id:'r46', name:'Puffed Rice', category:'Components', yield:'Fry at 400°F until golden',
+    ingredients:[{amount:'1 cup',name:'Brown Rice, overcooked'},{amount:'as needed',name:'Neutral oil for frying'},{amount:'to taste',name:'Kosher Salt'}],
+    steps:['Cook rice until well past done — intentionally overcooked.','Dehydrate rice until just dry.','Fry at 400°F until golden brown and puffed.','Remove from oil, drain, season with salt immediately. Reserve.']
+  },
+  { id:'r47', name:'Grilled Spine Dashi', category:'Stocks', yield:'~1 quart',
+    ingredients:[{amount:'1 ea',name:'Fish Spine (black cod, ling cod, or halibut)'},{amount:'to taste',name:'Kombu'},{amount:'to taste',name:'Dried Shiitake Mushrooms'},{amount:'~1 qt',name:'Water'},{amount:'optional',name:'Salt, soy, or white soy to taste'}],
+    steps:['Dry spine thoroughly with paper towels.','Grill over medium-high heat, charring to desired level of smokiness.','Bring ~1 qt water to low heat. Add kombu and steep approximately 15 minutes. Remove kombu.','Add dried shiitakes and grilled spine. Simmer gently. Season to taste.','Strain before service.']
+  },
+  { id:'r48', name:'Miso Leather', category:'Components', yield:'Dehydrate 4–6 hours at 155°F',
+    ingredients:[{amount:'150g',name:'Aka-Miso (red miso)'},{amount:'150g',name:'Water'},{amount:'to taste',name:'Salt'},{amount:'to taste',name:'Ultra-Tex 8'},{amount:'to taste',name:'Xanthan Gum'},{amount:'optional',name:'Soy sauce or acid to taste'}],
+    steps:['Combine water and miso over low heat, stirring until combined and slightly warm.','Transfer to blender. Blend on high. Season with salt. Adjust with soy or acid as needed.','Bring blender back to speed and shear in xanthan gum and Ultra-Tex 8 until smooth.','Pass through tamis or drum sieve.','Spread thin and even onto a silpat-lined sheet pan.','Dehydrate at 155°F for 4–6 hours, or 185°F on convection — watch carefully. Reserve.']
+  },
+  { id:'r49', name:'Gnocchi (Pâte à Choux)', category:'Breads & Doughs', yield:'~5–6 dozen',
+    ingredients:[{amount:'1½ cups',name:'Water'},{amount:'12 T (6 oz)',name:'Unsalted Butter'},{amount:'1 T + 1 tsp',name:'Kosher Salt'},{amount:'2 cups + 2 T',name:'All-Purpose Flour, sifted'},{amount:'2 T',name:'Dijon Mustard OR 4 oz flavorful purée'},{amount:'5–6 ea',name:'Whole Eggs, room temperature'}],
+    steps:['Combine water, butter, and salt. Bring to a simmer.','Add all sifted flour at once. Stir with whisk then switch to wooden spoon or spatula.','Stir constantly until dough is tacky and pulls away from sides and bottom of pan.','Remove from heat. Transfer to stand mixer bowl with paddle attachment.','Mix on medium speed. Add mustard or purée and incorporate fully.','Add room temperature eggs one at a time, fully incorporating each before adding the next.','Reserve for service. Pipe or spoon into simmering water to order.']
+  },
+  { id:'r50', name:'Whey Gastrique', category:'Sauces', yield:'Reduce to napé consistency',
+    ingredients:[{amount:'4 qts',name:'Whey, reserved from ricotta'},{amount:'¾ cup',name:'Sugar, Granulated'},{amount:'3 cups',name:'Champagne Vinegar'},{amount:'as needed',name:'Butter'}],
+    steps:['Reduce whey by two-thirds in a wide pot. Reserve.','In a clad-bottom stainless pot, dry caramelize sugar to desired color.','Slowly add champagne vinegar to caramel — use extreme caution, steam is intense. Stir until incorporated.','Reduce by half or until napé consistency.','Slowly whisk in reduced whey. Reduce heat and continue reducing until desired acidity, sweetness, and mouthfeel are achieved.','Finish with butter to order if desired.']
+  },
+  { id:'r51', name:'Small Tomato Stew', category:'Sauces', yield:'Small batch / per order',
+    ingredients:[{amount:'1 lb',name:'Sungold, cherry, or petit heirloom tomatoes, halved'},{amount:'2 tsp',name:'Shallots, minced'},{amount:'1 tsp',name:'Garlic, minced'},{amount:'3 oz',name:'Dry White Wine'},{amount:'as needed',name:'Spine Dashi'},{amount:'to taste',name:'Fresh Thyme'},{amount:'as needed',name:'Olive Oil'}],
+    steps:['Heat saucepan over high heat. Add oil, then blister tomatoes quickly.','Add minced garlic and shallots while tomatoes are still blistering. Reduce heat and sweat until aromatic.','Add white wine. Reduce by half.','Add dashi and fresh thyme sprigs. Simmer briefly until cohesive. Season and serve immediately.']
+  },
+  { id:'r52', name:'Champagne Shallot Mustard Vinaigrette', category:'Sauces', yield:'~470g',
+    ingredients:[{amount:'110g',name:'Champagne Vinegar'},{amount:'330g',name:'Blended Oil'},{amount:'30g',name:'Shallots, fine brunoise'},{amount:'16g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'to taste',name:'Black Pepper'},{amount:'6–8g (optional)',name:'Honey'}],
+    steps:['Combine vinegar, Dijon, shallots, salt, pepper, and honey. Whisk until fully integrated.','Slowly stream in oil while whisking continuously until fully emulsified.','Optional variations: chives, tarragon, lemon zest, parsley/fines herbes, verjus splash.']
+  },
+  { id:'r53', name:'Banyuls Shallot Mustard Vinaigrette', category:'Sauces', yield:'~470g',
+    ingredients:[{amount:'125g',name:'Banyuls Vinegar'},{amount:'325g',name:'Blended Oil'},{amount:'30g',name:'Shallots, fine brunoise'},{amount:'16g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'to taste',name:'Black Pepper'},{amount:'4–6g',name:'Honey or sugar'}],
+    steps:['Combine vinegar and shallots. Rest 5–10 minutes.','Add Dijon and seasoning. Whisk thoroughly.','Slowly stream in oil while whisking until emulsified.','Optional variations: orange zest, thyme, black garlic, sherry vinegar splash, cracked coriander.']
+  },
+  { id:'r54', name:'Rice Wine Shallot Mustard Vinaigrette', category:'Sauces', yield:'~490g',
+    ingredients:[{amount:'140g',name:'Rice Wine Vinegar'},{amount:'320g',name:'Blended Oil'},{amount:'28–30g',name:'Shallots, fine brunoise'},{amount:'15g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'to taste',name:'White Pepper'},{amount:'6–8g',name:'Honey or sugar'},{amount:'5–8g (optional)',name:'Lemon Juice'}],
+    steps:['Combine vinegar and shallots. Rest 5 minutes.','Add Dijon, seasoning, and sweetener. Whisk well.','Slowly stream in oil while whisking until emulsified.','Optional variations: yuzu or lemon zest, scallions, few drops sesame oil, ginger juice, small amount cilantro.']
+  },
+  { id:'r55', name:'White Distilled Vinegar Vinaigrette', category:'Sauces', yield:'~480g',
+    ingredients:[{amount:'80g',name:'White Distilled Vinegar'},{amount:'40g',name:'Water'},{amount:'330g',name:'Blended Oil'},{amount:'30g',name:'Shallots, fine brunoise'},{amount:'16g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'10–12g',name:'Honey or sugar'}],
+    steps:['Combine vinegar, water, and shallots. Rest 10 minutes.','Add Dijon, seasoning, and sweetener. Whisk thoroughly.','Slowly stream in oil while whisking until emulsified.','Taste and adjust carefully. Optional variations: extra honey, lemon zest, parsley/herbs, small knob melted butter.']
+  },
+  { id:'r56', name:'Carrot – Miso – Cream Purée', category:'Purees & Emulsions', yield:'Per 1000g carrots',
+    ingredients:[{amount:'1000g',name:'Carrots, peeled and thinly sliced'},{amount:'400g',name:'Heavy Cream'},{amount:'80g',name:'Butter'},{amount:'50–55g',name:'White Miso (adjust to taste)'},{amount:'to taste',name:'Salt (minimal — miso is salty)'},{amount:'4–8g (optional)',name:'Rice vinegar or lemon juice'}],
+    steps:['Slice carrots thin for even cooking.','Sweat gently in butter over medium-low heat until completely tender. Avoid browning.','Warm cream separately — do not boil.','Transfer warm carrots, cream, butter, and most of the miso to blender. Blend on high until absolutely smooth and glossy.','Taste and adjust miso incrementally. Add acid if purée feels too round or flat.','Optional: shear in Ultra-Tex 8 at 1.8–2.2% of total weight for pudding-silky texture. Xanthan at 0.15–0.25% for minor tightening only.','Optional variations: brown butter, orange zest, black garlic, ginger juice, few drops sesame oil.']
+  },
+  { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden',
+    ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}],
+    steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.']
+  },
 ];
 
 // ── STATE ─────────────────────────────────────────────
@@ -681,7 +808,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42'];
+  const ids = ['h1','h2','h3','h4','h5','r24','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42','r43','r44','r45','r46','r47','r48','r49','r50','r51','r52','r53','r54','r55','r56'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
@@ -891,11 +1018,15 @@ window.signOutChat = async function() {
 window.switchTab = function(tab) {
   currentTab = tab;
   const isChat = tab === 'chat';
-  document.getElementById('tab-recipes').classList.toggle('active', !isChat);
+  const isPrep = tab === 'prep';
+  const isRecipes = tab === 'recipes';
+  document.getElementById('tab-recipes').classList.toggle('active', isRecipes);
+  document.getElementById('tab-prep').classList.toggle('active', isPrep);
   document.getElementById('tab-chat').classList.toggle('active', isChat);
-  document.getElementById('recipe-search-bar').style.display = isChat ? 'none' : '';
-  document.getElementById('cat-pills').style.display = isChat ? 'none' : '';
-  document.getElementById('recipe-list').style.display = isChat ? 'none' : '';
+  document.getElementById('recipe-search-bar').style.display = isRecipes ? '' : 'none';
+  document.getElementById('cat-pills').style.display = isRecipes ? '' : 'none';
+  document.getElementById('recipe-list').style.display = isRecipes ? '' : 'none';
+  document.getElementById('prep-view').classList.toggle('active', isPrep);
   document.getElementById('chat-view').classList.toggle('active', isChat);
 
   if (isChat) {
@@ -905,6 +1036,12 @@ window.switchTab = function(tab) {
     localStorage.setItem('beck_chat_last_seen', lastSeenTimestamp);
     updateChatAuthUI();
     setTimeout(() => scrollChatToBottom(), 100);
+  }
+  if (isPrep) {
+    if (!prepUnsubscribe) initPrepList();
+    document.getElementById('prep-date-text').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+    document.getElementById('prep-upload-btn').style.display = isAdmin ? 'flex' : 'none';
+    if (isAdmin) document.getElementById('prep-empty-sub').textContent = 'Upload an Excel file to create today\'s prep list.';
   }
 };
 
@@ -1007,6 +1144,125 @@ window.sendMessage = async function() {
 
 window.chatKeydown = function(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+};
+
+// ── PREP LIST ─────────────────────────────────────────
+let prepUnsubscribe = null;
+let prepItems = [];
+
+function initPrepList() {
+  prepUnsubscribe = onSnapshot(doc(db, 'prep_list', 'current'), (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      prepItems = data.items || [];
+      renderPrepList(prepItems, data.title, data.uploadedAt);
+    } else {
+      prepItems = [];
+      renderPrepList([], null, null);
+    }
+  });
+}
+
+function renderPrepList(items, title, uploadedAt) {
+  const container = document.getElementById('prep-list-container');
+  if (!items.length) {
+    container.innerHTML = `<div class="prep-empty">
+      <div class="prep-empty-icon">📋</div>
+      <div class="prep-empty-title">No Prep List</div>
+      <div class="prep-empty-sub" id="prep-empty-sub">${isAdmin ? 'Upload an Excel file to create today\'s prep list.' : 'Ask the chef to upload today\'s prep list.'}</div>
+    </div>`;
+    document.getElementById('prep-progress-fill').style.width = '0%';
+    return;
+  }
+
+  // Update progress bar
+  const done = items.filter(i => i.status === 'done').length;
+  const total = items.filter(i => i.section === undefined || i.section === false).length || items.length;
+  const pct = total > 0 ? Math.round((done / items.length) * 100) : 0;
+  document.getElementById('prep-progress-fill').style.width = pct + '%';
+  if (title) document.getElementById('prep-title-text').textContent = title;
+
+  // Group by section
+  let html = '';
+  let currentSection = '';
+  items.forEach((item, idx) => {
+    if (item.isSection) {
+      currentSection = item.name;
+      html += `<div class="prep-section-label">${item.name}</div>`;
+      return;
+    }
+    const status = item.status || 'needed';
+    const pillLabel = status === 'needed' ? 'Needed' : status === 'inprogress' ? 'In Progress' : 'Done';
+    const nameClass = status === 'done' ? 'prep-item-name done-text' : 'prep-item-name';
+    const qty = item.qty ? `${item.qty}${item.unit ? ' ' + item.unit : ''}` : '';
+    html += `<div class="prep-item" onclick="cyclePrepStatus(${idx})">
+      <span class="prep-status-pill ${status}">${pillLabel}</span>
+      <span class="${nameClass}">${escapeHtml(item.name)}</span>
+      ${qty ? `<span class="prep-item-qty">${escapeHtml(qty)}</span>` : ''}
+    </div>`;
+  });
+
+  if (isAdmin) {
+    html += `<button class="prep-reset-btn" onclick="resetPrepList()">Reset All to Needed</button>`;
+  }
+  container.innerHTML = html;
+}
+
+window.cyclePrepStatus = async function(idx) {
+  const item = prepItems[idx];
+  if (!item || item.isSection) return;
+  const cycle = { needed: 'inprogress', inprogress: 'done', done: 'needed' };
+  const newStatus = cycle[item.status || 'needed'];
+  prepItems[idx] = { ...item, status: newStatus };
+  playMessageSound();
+  try {
+    await setDoc(doc(db, 'prep_list', 'current'), { items: prepItems }, { merge: true });
+  } catch(e) { console.error('Prep update failed', e); }
+};
+
+window.resetPrepList = async function() {
+  if (!isAdmin) return;
+  if (!confirm('Reset all items to Needed?')) return;
+  const reset = prepItems.map(i => i.isSection ? i : { ...i, status: 'needed' });
+  await setDoc(doc(db, 'prep_list', 'current'), { items: reset }, { merge: true });
+};
+
+window.handlePrepUpload = async function(event) {
+  if (!isAdmin) return;
+  const file = event.target.files[0];
+  if (!file) return;
+  showSync('Parsing prep list…');
+  try {
+    const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs');
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf);
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+
+    const items = [];
+    rows.forEach(row => {
+      const name = row[0] ? String(row[0]).trim() : null;
+      if (!name) return;
+      const qty = row[1] !== null && row[1] !== undefined ? String(row[1]).trim() : '';
+      const unit = row[2] ? String(row[2]).trim() : '';
+      // Detect section headers — no qty/unit and title-case or all-caps
+      const isSection = (!qty || qty === '') && (!unit || unit === '');
+      items.push({ name, qty: isSection ? '' : qty, unit: isSection ? '' : unit, isSection, status: 'needed' });
+    });
+
+    const title = file.name.replace(/\.(xlsx|xls)$/i, '');
+    await setDoc(doc(db, 'prep_list', 'current'), {
+      items, title,
+      uploadedAt: serverTimestamp(),
+      uploadedBy: chatUser ? (chatUser.displayName || chatUser.email) : 'Admin'
+    });
+    hideSync();
+    event.target.value = '';
+  } catch(e) {
+    hideSync();
+    console.error(e);
+    alert('Failed to parse Excel file. Make sure it\'s a valid .xlsx file.');
+  }
 };
 
 window.autoResizeTextarea = function(el) {
