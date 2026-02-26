@@ -827,6 +827,10 @@ function grantAdmin() {
   document.getElementById('add-btn').style.display = 'flex';
   document.getElementById('detail-actions').style.display = 'flex';
   initApp();
+  // Re-render prep list with admin controls if it was already loaded as staff
+  if (prepItems && prepItems.length) renderPrepList(prepItems, null, null);
+  // Show upload button if on prep tab
+  document.getElementById('prep-upload-btn').style.display = 'flex';
   setTimeout(pushMissingRecipes, 2000);
 }
 
