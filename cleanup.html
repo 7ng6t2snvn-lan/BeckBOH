@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Beck Kitchen — Cleanup</title>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: 60px auto; padding: 20px; background: #f8f5f0; color: #1a1814; }
+h2 { font-size: 22px; margin-bottom: 8px; }
+p { color: #5a5448; margin-bottom: 24px; font-size: 14px; }
+button { background: #9a7040; color: #fff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 15px; cursor: pointer; display: block; width: 100%; margin-bottom: 12px; }
+button:active { opacity: 0.8; }
+#log { background: #fff; border: 1px solid #e0d8cc; border-radius: 10px; padding: 16px; font-size: 13px; font-family: monospace; min-height: 120px; white-space: pre-wrap; margin-top: 20px; }
+</style>
+</head>
+<body>
+<h2>Beck Kitchen — Firestore Cleanup</h2>
+<p>This will delete all duplicate entries for Corning Brine, XO Sauce, and Yuzu Beurre Blanc from Firestore, then write the correct single version of each (including updated XO Sauce quart yield).</p>
+<button onclick="runCleanup()">Run Cleanup</button>
+<div id="log">Ready. Press the button to begin...</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, deleteDoc, setDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
+  authDomain: "beck-kitchen-reference.firebaseapp.com",
+  projectId: "beck-kitchen-reference",
+  storageBucket: "beck-kitchen-reference.firebasestorage.app",
+  messagingSenderId: "1076150647462",
+  appId: "1:1076150647462:web:97974b77af810b35225267"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+const CORRECT_RECIPES = [
+  { id:'r57', name:'Corning Brine', category:'Cures & Preserved', yield:'1 gallon',
+    ingredients:[
+      {amount:'1 gallon',name:'Water'},
+      {amount:'2 cups',name:'Kosher Salt'},
+      {amount:'½ cup',name:'Sugar'},
+      {amount:'25g',name:'Pink Salt (curing salt)'},
+      {amount:'3 cloves',name:'Garlic'},
+      {amount:'2 tsp',name:'Black Peppercorns'},
+      {amount:'2 tsp',name:'Mustard Seed'},
+      {amount:'2 tsp',name:'Coriander'},
+      {amount:'2 tsp',name:'Red Pepper Flake'},
+      {amount:'2 tsp',name:'Allspice Berry'},
+      {amount:'½ tsp',name:'Mace'},
+      {amount:'2 ea',name:'Cinnamon Stick'},
+      {amount:'7 ea',name:'Bay Leaves'},
+      {amount:'1 tsp',name:'Cloves'},
+      {amount:'½ tsp',name:'Ginger, Ground'},
+    ],
+    steps:[
+      'Combine all ingredients in a pot. Bring to a boil, stirring until salt and sugar fully dissolve.',
+      'Cool completely before using. Submerge protein fully in brine. Refrigerate.',
+      'Brine time varies by protein size and desired cure depth.',
+    ]
+  },
+  { id:'r58', name:'XO Sauce', category:'Sauces', yield:'~1 quart — flavor improves after 48 hrs refrigerated',
+    ingredients:[
+      {amount:'70g',name:'Dried Scallops (conpoy)'},
+      {amount:'44g',name:'Dried Shrimp'},
+      {amount:'210g',name:'Shallots, very finely diced'},
+      {amount:'61g',name:'Garlic, minced'},
+      {amount:'35g',name:'Ginger, minced'},
+      {amount:'44g',name:'Dried Chilies — preferred blend for Wagyu: 70% Facing Heaven / 30% Tien Tsin'},
+      {amount:'438g',name:'Neutral Oil (grapeseed or peanut)'},
+      {amount:'44g',name:'Sesame Oil'},
+      {amount:'32g',name:'Light Soy Sauce'},
+      {amount:'11g',name:'Sugar'},
+      {amount:'¾ tsp',name:'White Pepper'},
+      {amount:'optional pinch',name:'MSG'},
+      {amount:'35g (optional)',name:'Jinhua Ham or Prosciutto, micro-diced'},
+      {amount:'small splash (optional)',name:'Shaoxing Wine'},
+    ],
+    steps:[
+      'Soak scallops and shrimp in warm water 30–45 minutes. Drain well, reserve soaking liquid. Shred scallops by hand, roughly chop shrimp. Do not purée.',
+      'Heat neutral oil over medium-low heat. Cook shallots slowly until lightly golden. Add garlic and ginger; cook gently — avoid browning.',
+      'Add scallops and shrimp. Cook gently, stirring, until moisture cooks out and aromas deepen. Add a small spoon of soaking liquid if needed.',
+      'Add chilies, soy sauce, sugar, white pepper, and optional wine or MSG. Continue cooking gently until oil becomes aromatic and lightly tinted.',
+      'Remove from heat. Stir in sesame oil. Cool completely before storing. Refrigerate — flavor improves significantly after 48 hours.',
+    ]
+  },
+  { id:'r59', name:'Yuzu Beurre Blanc', category:'Sauces', yield:'~900g — 70–75 pulls at 12g each',
+    ingredients:[
+      {amount:'150g',name:'Dry White Wine'},
+      {amount:'60g',name:'Champagne Vinegar'},
+      {amount:'40g',name:'Shallot, minced'},
+      {amount:'8g (optional)',name:'Fresh Ginger, sliced'},
+      {amount:'2g',name:'Kosher Salt'},
+      {amount:'90g',name:'Fresh Yuzu Juice (or 70g yuzu + 20g lime)'},
+      {amount:'5g',name:'Yuzu Zest, microplaned'},
+      {amount:'300g',name:'Cold Unsalted European Butter, 82–84% fat, diced'},
+      {amount:'20g',name:'Ice-Cold Water (viscosity adjustment)'},
+      {amount:'1–2g (optional)',name:'White Soy'},
+      {amount:'to taste',name:'Fine Salt'},
+    ],
+    steps:[
+      'Combine wine, champagne vinegar, shallot, ginger, and salt. Reduce to au sec — approximately 60–70g remaining. Strain and reserve warm.',
+      'Warm reduction gently. Whisk in yuzu juice and zest.',
+      'Mount cold diced butter slowly off heat, maintaining 55–60°C. Do not boil.',
+      'Adjust viscosity with ice-cold water if needed. Add white soy if using. Season with fine salt.',
+      'Strain through fine chinois for a refined finish if desired.',
+      'Hold at 50–55°C for service. Designed for dashi-poached black cod, Asian pear, spinach purée, daikon, and toasted nori.',
+    ]
+  },
+];
+
+const log = document.getElementById('log');
+function print(msg) { log.textContent += msg + '\n'; }
+
+window.runCleanup = async function() {
+  log.textContent = '';
+  print('Signing in to Google...');
+  try {
+    await signInWithPopup(auth, provider);
+    print('Signed in.\n');
+  } catch(e) {
+    print('Sign-in failed: ' + e.message);
+    return;
+  }
+
+  const targetIds = ['r57', 'r58', 'r59'];
+
+  print('Fetching all recipes from Firestore...');
+  const snap = await getDocs(collection(db, 'recipes'));
+  const allDocs = [];
+  snap.forEach(d => allDocs.push({ docId: d.id, data: d.data() }));
+  print(`Found ${allDocs.length} total recipe documents.\n`);
+
+  // Find and delete ALL documents whose data.id is r57/r58/r59
+  for (const targetId of targetIds) {
+    const matches = allDocs.filter(d => d.data.id === targetId);
+    print(`Found ${matches.length} document(s) with id='${targetId}':`);
+    for (const m of matches) {
+      print(`  Deleting doc key: ${m.docId}`);
+      await deleteDoc(doc(db, 'recipes', m.docId));
+      print(`  ✓ Deleted.`);
+    }
+  }
+
+  print('\nWriting correct versions...');
+  for (const recipe of CORRECT_RECIPES) {
+    await setDoc(doc(db, 'recipes', recipe.id), recipe);
+    print(`✓ Wrote ${recipe.name} (${recipe.yield})`);
+  }
+
+  print('\n✅ Done! Refresh the Beck Kitchen app.');
+};
+</script>
+</body>
+</html>
