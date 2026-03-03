@@ -730,6 +730,78 @@ const DEFAULT_RECIPES = [
     ingredients:[{amount:'1000g',name:'Carrots, peeled and thinly sliced'},{amount:'400g',name:'Heavy Cream'},{amount:'80g',name:'Butter'},{amount:'50–55g',name:'White Miso (adjust to taste)'},{amount:'to taste',name:'Salt (minimal — miso is salty)'},{amount:'4–8g (optional)',name:'Rice vinegar or lemon juice'}],
     steps:['Slice carrots thin for even cooking.','Sweat gently in butter over medium-low heat until completely tender. Avoid browning.','Warm cream separately — do not boil.','Transfer warm carrots, cream, butter, and most of the miso to blender. Blend on high until absolutely smooth and glossy.','Taste and adjust miso incrementally. Add acid if purée feels too round or flat.','Optional: shear in Ultra-Tex 8 at 1.8–2.2% of total weight for pudding-silky texture. Xanthan at 0.15–0.25% for minor tightening only.','Optional variations: brown butter, orange zest, black garlic, ginger juice, few drops sesame oil.']
   },
+  { id:'r57', name:'Corning Brine', category:'Cures & Preserved', yield:'1 gallon',
+    ingredients:[
+      {amount:'1 gallon',name:'Water'},
+      {amount:'2 cups',name:'Kosher Salt'},
+      {amount:'½ cup',name:'Sugar'},
+      {amount:'25g',name:'Pink Salt (curing salt)'},
+      {amount:'3 cloves',name:'Garlic'},
+      {amount:'2 tsp',name:'Black Peppercorns'},
+      {amount:'2 tsp',name:'Mustard Seed'},
+      {amount:'2 tsp',name:'Coriander'},
+      {amount:'2 tsp',name:'Red Pepper Flake'},
+      {amount:'2 tsp',name:'Allspice Berry'},
+      {amount:'½ tsp',name:'Mace'},
+      {amount:'2 ea',name:'Cinnamon Stick'},
+      {amount:'7 ea',name:'Bay Leaves'},
+      {amount:'1 tsp',name:'Cloves'},
+      {amount:'½ tsp',name:'Ginger, Ground'},
+    ],
+    steps:[
+      'Combine all ingredients in a pot. Bring to a boil, stirring until salt and sugar fully dissolve.',
+      'Cool completely before using. Submerge protein fully in brine. Refrigerate.',
+      'Brine time varies by protein size and desired cure depth.',
+    ]
+  },
+  { id:'r58', name:'XO Sauce', category:'Sauces', yield:'Flavor improves after 48 hrs refrigerated',
+    ingredients:[
+      {amount:'40g',name:'Dried Scallops (conpoy)'},
+      {amount:'25g',name:'Dried Shrimp'},
+      {amount:'120g',name:'Shallots, very finely diced'},
+      {amount:'35g',name:'Garlic, minced'},
+      {amount:'20g',name:'Ginger, minced'},
+      {amount:'20–30g',name:'Dried Chilies — preferred blend for Wagyu: 70% Facing Heaven / 30% Tien Tsin'},
+      {amount:'250g',name:'Neutral Oil (grapeseed or peanut)'},
+      {amount:'25g',name:'Sesame Oil'},
+      {amount:'18g',name:'Light Soy Sauce'},
+      {amount:'6g',name:'Sugar'},
+      {amount:'½ tsp',name:'White Pepper'},
+      {amount:'optional pinch',name:'MSG'},
+      {amount:'20g (optional)',name:'Jinhua Ham or Prosciutto, micro-diced'},
+      {amount:'small splash (optional)',name:'Shaoxing Wine'},
+    ],
+    steps:[
+      'Soak scallops and shrimp in warm water 30–45 minutes. Drain well, reserve soaking liquid. Shred scallops by hand, roughly chop shrimp. Do not purée.',
+      'Heat neutral oil over medium-low heat. Cook shallots slowly until lightly golden. Add garlic and ginger; cook gently — avoid browning.',
+      'Add scallops and shrimp. Cook gently, stirring, until moisture cooks out and aromas deepen. Add a small spoon of soaking liquid if needed.',
+      'Add chilies, soy sauce, sugar, white pepper, and optional wine or MSG. Continue cooking gently until oil becomes aromatic and lightly tinted.',
+      'Remove from heat. Stir in sesame oil. Cool completely before storing. Refrigerate — flavor improves significantly after 48 hours.',
+    ]
+  },
+  { id:'r59', name:'Yuzu Beurre Blanc', category:'Sauces', yield:'~900g — 70–75 pulls at 12g each',
+    ingredients:[
+      {amount:'150g',name:'Dry White Wine'},
+      {amount:'60g',name:'Champagne Vinegar'},
+      {amount:'40g',name:'Shallot, minced'},
+      {amount:'8g (optional)',name:'Fresh Ginger, sliced'},
+      {amount:'2g',name:'Kosher Salt'},
+      {amount:'90g',name:'Fresh Yuzu Juice (or 70g yuzu + 20g lime)'},
+      {amount:'5g',name:'Yuzu Zest, microplaned'},
+      {amount:'300g',name:'Cold Unsalted European Butter, 82–84% fat, diced'},
+      {amount:'20g',name:'Ice-Cold Water (viscosity adjustment)'},
+      {amount:'1–2g (optional)',name:'White Soy'},
+      {amount:'to taste',name:'Fine Salt'},
+    ],
+    steps:[
+      'Combine wine, champagne vinegar, shallot, ginger, and salt. Reduce to au sec — approximately 60–70g remaining. Strain and reserve warm.',
+      'Warm reduction gently. Whisk in yuzu juice and zest.',
+      'Mount cold diced butter slowly off heat, maintaining 55–60°C. Do not boil.',
+      'Adjust viscosity with ice-cold water if needed. Add white soy if using. Season with fine salt.',
+      'Strain through fine chinois for a refined finish if desired.',
+      'Hold at 50–55°C for service. Designed for dashi-poached black cod, Asian pear, spinach purée, daikon, and toasted nori.',
+    ]
+  },
   { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden',
     ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}],
     steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.']
@@ -835,7 +907,7 @@ function grantAdmin() {
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r24','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42','r43','r44','r45','r46','r47','r48','r49','r50','r51','r52','r53','r54','r55','r56'];
+  const ids = ['h1','h2','h3','h4','h5','r24','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42','r43','r44','r45','r46','r47','r48','r49','r50','r51','r52','r53','r54','r55','r56','r57','r58','r59'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
