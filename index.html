@@ -12,13 +12,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f8f5f0; --surface: #ffffff; --surface2: #f0ece4;
-  --border: #e0d8cc; --border2: #ccc4b4;
-  --text: #1a1814; --text-dim: #5a5448; --text-muted: #9a9088;
-  --accent: #9a7040; --accent-dim: #7a5830; --accent-glow: rgba(154,112,64,0.10);
-  --danger: #b84030; --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'Karla', sans-serif;
-  --needed-bg: #fff4f2; --needed-text: #b84030; --needed-border: #f0c8c0;
-  --done-bg: #f2fbf4; --done-text: #2a8a48; --done-border: #b8e4c4;
+  --bg: #0d0d0b; --surface: #161614; --surface2: #1e1e1a;
+  --border: #2a2a24; --border2: #363630;
+  --text: #e8e4d8; --text-dim: #8a8474; --text-muted: #4a4840;
+  --accent: #b5956a; --accent-dim: #7a6245; --accent-glow: rgba(181,149,106,0.10);
+  --danger: #c0614a; --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'Karla', sans-serif;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; min-height: 100dvh; overflow-x: hidden; }
@@ -144,85 +142,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .form-btn.secondary { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-dim); margin-top: 10px; }
 .del-btn { width: 100%; padding: 12px; border-radius: 12px; background: transparent; border: 1px solid var(--danger); color: var(--danger); font-family: var(--sans); font-size: 14px; cursor: pointer; margin-top: 10px; transition: all 0.15s; }
 .del-btn:active { background: rgba(192,97,74,0.1); }
-
-/* NAV TABS */
-.nav-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 58px; z-index: 90; }
-.nav-tab { flex: 1; padding: 10px; text-align: center; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; position: relative; }
-.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.chat-badge { position: absolute; top: 7px; right: calc(50% - 22px); background: var(--danger); color: #fff; font-size: 9px; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
-
-/* CHAT VIEW */
-#chat-view { display: none; flex-direction: column; height: calc(100dvh - 58px - 41px); }
-#chat-view.active { display: flex; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-.chat-day-divider { text-align: center; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 4px 0; }
-.chat-msg { display: flex; flex-direction: column; max-width: 82%; }
-.chat-msg.mine { align-self: flex-end; align-items: flex-end; }
-.chat-msg.theirs { align-self: flex-start; align-items: flex-start; }
-.chat-sender { font-size: 10px; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 3px; text-transform: uppercase; }
-.chat-bubble { padding: 9px 13px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; }
-.chat-msg.mine .chat-bubble { background: var(--accent); color: #0d0d0b; border-bottom-right-radius: 4px; }
-.chat-msg.theirs .chat-bubble { background: var(--surface2); color: var(--text); border-bottom-left-radius: 4px; }
-.chat-time { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
-.chat-input-bar { border-top: 1px solid var(--border); padding: 10px 16px; background: var(--bg); display: flex; gap: 10px; align-items: flex-end; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-.chat-textarea { flex: 1; background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; color: var(--text); font-family: var(--sans); font-size: 14px; padding: 9px 14px; outline: none; resize: none; max-height: 100px; overflow-y: auto; line-height: 1.4; transition: border-color 0.15s; }
-.chat-textarea:focus { border-color: var(--accent-dim); }
-.chat-textarea::placeholder { color: var(--text-muted); }
-.chat-send-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; }
-.chat-send-btn:active { opacity: 0.75; }
-.chat-send-btn svg { width: 16px; height: 16px; fill: #0d0d0b; }
-.chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); gap: 10px; }
-.chat-empty-icon { font-size: 36px; }
-.chat-empty-text { font-family: var(--serif); font-size: 18px; color: var(--text-dim); }
-.chat-empty-sub { font-size: 12px; }
-
-/* NAME MODAL */
-#name-modal { position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; padding: 24px; }
-#name-modal.show { display: flex; }
-.name-sheet { background: var(--surface); border-radius: 20px; width: 100%; max-width: 360px; padding: 28px 20px; }
-.name-sheet-title { font-family: var(--serif); font-size: 24px; font-weight: 300; margin-bottom: 6px; }
-.name-sheet-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
-
-/* PREP LIST */
-#prep-view { display: none; flex-direction: column; height: calc(100dvh - 58px - 41px); overflow-y: auto; }
-#prep-view.active { display: flex; }
-.prep-header-bar { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0; background: var(--surface); }
-.prep-title-text { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--text); }
-.prep-date-text { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; }
-.prep-upload-btn { display: flex; align-items: center; gap: 6px; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-family: var(--sans); font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; }
-.prep-upload-btn:active { opacity: 0.8; }
-.prep-col-headers { display: flex; align-items: center; padding: 6px 16px; border-bottom: 2px solid var(--border2); background: var(--surface2); flex-shrink: 0; }
-.prep-col-item { flex: 1; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
-.prep-col-qty { width: 60px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); text-align: center; }
-.prep-col-n { width: 44px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--needed-text); text-align: center; font-weight: 700; }
-.prep-col-p { width: 44px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); text-align: center; font-weight: 700; }
-.prep-col-d { width: 44px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--done-text); text-align: center; font-weight: 700; }
-.prep-section-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); padding: 12px 16px 4px; background: var(--bg); border-bottom: 1px solid var(--border); font-weight: 600; }
-.prep-item { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface); gap: 8px; transition: background 0.1s; }
-.prep-item.is-needed { background: var(--needed-bg); }
-.prep-item.is-inprogress { background: rgba(154,112,64,0.06); }
-.prep-item.is-done { background: var(--done-bg); opacity: 0.7; }
-.prep-item-name { flex: 1; font-size: 14px; color: var(--text); line-height: 1.3; font-weight: 300 !important; }
-.prep-item-name.is-needed-text { font-weight: 700 !important; color: var(--text); }
-.prep-item-name.is-inprogress-text { font-weight: 700 !important; color: var(--accent); }
-.prep-item-name.is-done-text { color: var(--text-muted); text-decoration: line-through; font-weight: 300 !important; }
-.prep-item-qty { width: 60px; font-size: 12px; color: var(--text-dim); text-align: center; flex-shrink: 0; }
-.prep-mark-btn { width: 36px; height: 36px; border-radius: 8px; border: 2px solid; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; font-weight: 800; flex-shrink: 0; transition: all 0.15s; background: transparent; font-family: var(--sans); }
-.prep-mark-btn.n-btn { border-color: var(--needed-border); color: var(--needed-text); }
-.prep-mark-btn.n-btn.active { background: var(--needed-bg); border-color: var(--needed-text); }
-.prep-mark-btn.p-btn { border-color: rgba(154,112,64,0.3); color: var(--accent); }
-.prep-mark-btn.p-btn.active { background: rgba(154,112,64,0.12); border-color: var(--accent); }
-.prep-mark-btn.d-btn { border-color: var(--done-border); color: var(--done-text); }
-.prep-mark-btn.d-btn.active { background: var(--done-bg); border-color: var(--done-text); }
-.prep-mark-btn:active { transform: scale(0.9); }
-.prep-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px 24px; text-align: center; }
-.prep-empty-icon { font-size: 36px; }
-.prep-empty-title { font-family: var(--serif); font-size: 20px; color: var(--text-dim); }
-.prep-empty-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
-.prep-reset-btn { margin: 12px 16px; padding: 10px; border-radius: 10px; border: 1px solid var(--border2); background: transparent; color: var(--danger); font-family: var(--sans); font-size: 13px; cursor: pointer; width: calc(100% - 32px); }
-.prep-reset-btn:active { background: rgba(184,64,48,0.08); }
-.prep-progress-bar { height: 4px; background: var(--border); flex-shrink: 0; }
-.prep-progress-fill { height: 100%; background: #2a8a48; transition: width 0.3s ease; }
 </style>
 </head>
 <body>
@@ -268,7 +187,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 
 <!-- MAIN APP -->
 <div id="app">
-
   <div id="list-view">
     <header class="app-header">
       <img class="header-logo" id="header-logo" alt="Beck">
@@ -277,12 +195,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
         <div class="icon-btn" id="add-btn" onclick="openAdd()" style="display:none;">＋</div>
       </div>
     </header>
-    <div class="nav-tabs">
-      <div class="nav-tab active" id="tab-recipes" onclick="switchTab('recipes')">Recipes</div>
-      <div class="nav-tab" id="tab-prep" onclick="switchTab('prep')">Prep List</div>
-      <div class="nav-tab" id="tab-chat" onclick="switchTab('chat')">Chat <span class="chat-badge" id="chat-unread-badge" style="display:none;"></span></div>
-    </div>
-    <div class="search-bar" id="recipe-search-bar">
+    <div class="search-bar">
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
         <input type="text" id="search-input" placeholder="Search recipes…" oninput="renderList()">
@@ -291,65 +204,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
     <div class="category-scroll" id="cat-pills"></div>
     <div class="recipe-list" id="recipe-list">
       <div class="loading-state"><div class="loading-spinner"></div></div>
-    </div>
-
-    <!-- PREP LIST VIEW -->
-    <div id="prep-view">
-      <div class="prep-header-bar">
-        <div>
-          <div class="prep-title-text" id="prep-title-text">Today's Prep</div>
-          <div class="prep-date-text" id="prep-date-text"></div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="prep-upload-btn" id="prep-upload-btn" style="display:none;" onclick="document.getElementById('prep-file-input').click()">
-            ↑ Upload Excel
-          </button>
-          <input type="file" id="prep-file-input" accept=".xlsx,.xls" style="display:none;" onchange="handlePrepUpload(event)">
-        </div>
-      </div>
-      <div class="prep-progress-bar"><div class="prep-progress-fill" id="prep-progress-fill" style="width:0%"></div></div>
-      <div class="prep-col-headers">
-        <span class="prep-col-item">Item</span>
-        <span class="prep-col-qty">Par</span>
-        <span class="prep-col-n">N</span>
-        <span class="prep-col-p">P</span>
-        <span class="prep-col-d">D</span>
-      </div>
-      <div id="prep-list-container">
-        <div class="prep-empty">
-          <div class="prep-empty-icon">📋</div>
-          <div class="prep-empty-title">No Prep List</div>
-          <div class="prep-empty-sub" id="prep-empty-sub">Ask the chef to upload today's prep list.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CHAT VIEW -->
-    <div id="chat-view">
-      <!-- Sign-in wall (shown when not logged in) -->
-      <div id="chat-signin-wall" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;gap:16px;">
-        <div style="font-size:40px;">💬</div>
-        <div style="font-family:var(--serif);font-size:24px;font-weight:300;">Kitchen Chat</div>
-        <div style="font-size:13px;color:var(--text-dim);line-height:1.6;max-width:280px;">Sign in with your Google account to message the team. No admin access — chat only.</div>
-        <button class="google-btn" onclick="signInForChat()" style="margin-top:8px;">
-          <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Sign in with Google
-        </button>
-      </div>
-      <!-- Actual chat (shown when signed in) -->
-      <div id="chat-authed" style="display:none;flex-direction:column;flex:1;min-height:0;">
-        <div id="chat-user-bar" style="padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-          <span id="chat-user-name" style="font-size:12px;color:var(--text-muted);letter-spacing:0.06em;"></span>
-          <span onclick="signOutChat()" style="font-size:12px;color:var(--text-muted);cursor:pointer;padding:4px 0;">Sign out</span>
-        </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input-bar">
-          <textarea class="chat-textarea" id="chat-input" placeholder="Message the team…" rows="1" oninput="autoResizeTextarea(this)" onkeydown="chatKeydown(event)"></textarea>
-          <button class="chat-send-btn" onclick="sendMessage()">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -396,9 +250,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, setDoc, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, setDoc, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
@@ -412,7 +265,6 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
-const storage = getStorage(fbApp);
 const provider = new GoogleAuthProvider();
 
 // ── LOGO (embedded) ──────────────────────────────────
@@ -616,124 +468,85 @@ const DEFAULT_RECIPES = [
       'Ready in 20–30 minutes. Better after a few hours.',
     ]
   },
+  { id:'r41', name:'Corning Brine', category:'Cures & Preserved', yield:'1 gallon',
+    ingredients:[
+      {amount:'1 gallon',name:'Water'},
+      {amount:'2 cups',name:'Kosher Salt'},
+      {amount:'½ cup',name:'Sugar'},
+      {amount:'25g',name:'Pink Salt (curing salt)'},
+      {amount:'3 cloves',name:'Garlic'},
+      {amount:'2 tsp',name:'Black Peppercorns'},
+      {amount:'2 tsp',name:'Mustard Seed'},
+      {amount:'2 tsp',name:'Coriander'},
+      {amount:'2 tsp',name:'Red Pepper Flake'},
+      {amount:'2 tsp',name:'Allspice Berry'},
+      {amount:'½ tsp',name:'Mace'},
+      {amount:'2 ea',name:'Cinnamon Stick'},
+      {amount:'7 ea',name:'Bay Leaves'},
+      {amount:'1 tsp',name:'Cloves'},
+      {amount:'½ tsp',name:'Ginger, Ground'},
+    ],
+    steps:[
+      'Combine all ingredients in a pot. Bring to a boil, stirring until salt and sugar fully dissolve.',
+      'Cool completely before using. Submerge protein fully in brine. Refrigerate.',
+      'Brine time varies by protein size and desired cure depth.',
+    ]
+  },
+  { id:'r42', name:'XO Sauce', category:'Sauces', yield:'Flavor improves after 48 hrs refrigerated',
+    ingredients:[
+      {amount:'40g',name:'Dried Scallops (conpoy)'},
+      {amount:'25g',name:'Dried Shrimp'},
+      {amount:'120g',name:'Shallots, very finely diced'},
+      {amount:'35g',name:'Garlic, minced'},
+      {amount:'20g',name:'Ginger, minced'},
+      {amount:'20–30g',name:'Dried Chilies, ground or finely chopped — preferred blend for Wagyu: 70% Facing Heaven / 30% Tien Tsin'},
+      {amount:'250g',name:'Neutral Oil (grapeseed or peanut)'},
+      {amount:'25g',name:'Sesame Oil'},
+      {amount:'18g',name:'Light Soy Sauce'},
+      {amount:'6g',name:'Sugar'},
+      {amount:'½ tsp',name:'White Pepper'},
+      {amount:'optional pinch',name:'MSG'},
+      {amount:'20g (optional)',name:'Jinhua Ham or Prosciutto, micro-diced'},
+      {amount:'small splash (optional)',name:'Shaoxing Wine'},
+    ],
+    steps:[
+      'Soak scallops and shrimp in warm water 30–45 minutes. Drain well, reserve soaking liquid. Shred scallops by hand, roughly chop shrimp. Do not purée.',
+      'Heat neutral oil over medium-low heat. Cook shallots slowly until lightly golden. Add garlic and ginger; cook gently — avoid browning.',
+      'Add scallops and shrimp. Cook gently, stirring, until moisture cooks out and aromas deepen. Add a small spoon of soaking liquid if needed.',
+      'Add chilies, soy sauce, sugar, white pepper, and optional wine or MSG. Continue cooking gently until oil becomes aromatic and lightly tinted.',
+      'Remove from heat. Stir in sesame oil. Cool completely before storing. Refrigerate — flavor improves significantly after 48 hours.',
+    ]
+  },
+  { id:'r43', name:'Yuzu Beurre Blanc', category:'Sauces', yield:'~900g — 70–75 pulls at 12g each',
+    ingredients:[
+      {amount:'150g',name:'Dry White Wine'},
+      {amount:'60g',name:'Champagne Vinegar'},
+      {amount:'40g',name:'Shallot, minced'},
+      {amount:'8g (optional)',name:'Fresh Ginger, sliced'},
+      {amount:'2g',name:'Kosher Salt'},
+      {amount:'90g',name:'Fresh Yuzu Juice (or 70g yuzu + 20g lime)'},
+      {amount:'5g',name:'Yuzu Zest, microplaned'},
+      {amount:'300g',name:'Cold Unsalted European Butter, 82–84% fat, diced'},
+      {amount:'20g',name:'Ice-Cold Water (for viscosity adjustment)'},
+      {amount:'1–2g (optional)',name:'White Soy'},
+      {amount:'to taste',name:'Fine Salt'},
+    ],
+    steps:[
+      'Combine wine, champagne vinegar, shallot, ginger, and salt in a saucepan. Reduce to au sec — approximately 60–70g remaining. Strain and reserve warm.',
+      'Warm reduction gently. Whisk in yuzu juice and zest.',
+      'Mount cold diced butter slowly off heat, maintaining 55–60°C. Do not boil.',
+      'Adjust viscosity with ice-cold water if needed. Add white soy if using. Season with fine salt.',
+      'Strain through fine chinois for a refined finish if desired.',
+      'Hold at 50–55°C for service. Designed for dashi-poached black cod, Asian pear, spinach purée, daikon, and toasted nori.',
+    ]
+  },
   { id:'r25', name:'Caramel Sauce', category:'Sauces', yield:'~3100g', ingredients:[{amount:'3200g',name:'Sugar, Granulated'},{amount:'960g',name:'Water'},{amount:'1920g',name:'Heavy Cream'},{amount:'1360g',name:'Butter, Unsalted, cold diced'},{amount:'68g',name:'Kosher Salt'}], steps:['Make "wet sand" with water and sugar. Make sure no sugar is stuck on sides of pan.','Caramelize sugar until dark golden brown.','Turn off heat. Slowly add heavy cream, stirring carefully. Whisk in cold diced butter. Season with salt. Reserve.'] },
   { id:'r26', name:'Marsala Jus', category:'Sauces', yield:'4 quarts', ingredients:[{amount:'7 lbs',name:'Chicken Backs'},{amount:'1 gal',name:'Chicken Stock'},{amount:'6 lbs',name:'Cremini Mushrooms'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Celery'},{amount:'1 lb',name:'Carrots'},{amount:'4 oz',name:'Tomato Paste'},{amount:'1 oz',name:'Fresh Thyme'},{amount:'1 oz',name:'Fresh Rosemary'},{amount:'¼ bottle',name:'Sheffield Marsala'},{amount:'16 oz',name:'Red Wine (Sangiovese)'},{amount:'3 gal',name:'Water'}], steps:['Roast chicken backs until deeply golden. Reserve.','Caramelize mirepoix vegetables in rondeaux. Add tomato paste; pincé.','Deglaze with Marsala and red wine; reduce by half.','Add roasted bones, stock, water, and aromatics. Simmer low and slow 3–4 hours.','Strain through chinois. Reduce to desired consistency.'] },
   { id:'r27', name:'Ragu d\'Agnello (Lamb Ragu)', category:'Sauces', yield:'2 gallons', ingredients:[{amount:'10 lbs',name:'Ground Lamb'},{amount:'1 can',name:'Crushed Tomatoes'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'1 lb',name:'Carrots'},{amount:'1 lb',name:'Celery'},{amount:'3g',name:'Fresh Rosemary'},{amount:'3.5g',name:'Fresh Thyme'},{amount:'0.05 bunch',name:'Fresh Oregano'},{amount:'15g',name:'Kosher Salt'},{amount:'7g',name:'Black Pepper'},{amount:'6 oz',name:'Tomato Paste'},{amount:'1 qt',name:'Red Wine'}], steps:['In rondeaux, brown lamb until deeply caramelized. Remove any excess fat.','Grind mirepoix in Robot Coupe. Reserve.','Once lamb is browned and excess fat removed, add mirepoix and sweat until vegetables are tender.','Add tomato paste and caramelize. Deglaze with red wine; reduce by half.','Add crushed tomatoes; bring to a simmer. Cover and braise in 375°F oven for 90–120 minutes.','Remove from oven. Season with salt, pepper, lemon juice, crushed red pepper, and Firelli hot sauce.','Cool in shallow pan in walk-in.'] },
   { id:'r28', name:'Tomato Fennel Broth', category:'Sauces', yield:'5.5 quarts', ingredients:[{amount:'725g',name:'Fresh Fennel'},{amount:'465g',name:'Yellow Onions'},{amount:'1 can',name:'Whole Tomatoes'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 T',name:'Black Pepper'},{amount:'1.5 tsp',name:'Calabrian Chili'},{amount:'2 ea',name:'Fresh Oranges'},{amount:'6 oz',name:'Dry White Wine'},{amount:'½ gal',name:'Water'}], steps:['Sweat fennel and onions until soft and translucent.','Add Calabrian chili; cook briefly.','Add white wine; reduce by half.','Add tomatoes, water, orange zest and juice. Simmer 30–45 minutes.','Season with salt and pepper. Strain or leave rustic as needed.'] },
   { id:'r29', name:'House Bread — Soft Italian', category:'Breads & Doughs', yield:'30 loaves (175g each)', ingredients:[{amount:'1683g',name:'Hi-Gluten Flour'},{amount:'1683g',name:'Pizza Flour'},{amount:'2154g',name:'Water'},{amount:'135g',name:'Sugar, Granulated'},{amount:'135g',name:'Blend Oil 75/25'},{amount:'67g',name:'Kosher Salt'},{amount:'101g',name:'Powdered Milk'},{amount:'44g',name:'Instant Dry Yeast'}], steps:['Combine all dry ingredients in floor mixer with dough hook. Add water.','Mix on low 3 minutes. Mix on medium 5 minutes.','Bulk ferment until doubled.','Divide into 175g balls. Shape torpedo. Proof 45–60 minutes.','Bake at 375°F for 14–17 minutes.','Remove from oven; liberally brush with bread oil and Pecorino Romano. Return to oven 2 minutes.'] },
   { id:'r30', name:'Corfini Braised Pork Shank', category:'Proteins', yield:'17 portions', ingredients:[{amount:'16.5 lbs',name:'Corfini Pork Shanks'},{amount:'3 qt',name:'Chicken Stock'},{amount:'1 lb',name:'Carrots'},{amount:'1 lb',name:'Celery'},{amount:'2 lbs',name:'Yellow Onions'},{amount:'3 oz',name:'Tomato Paste'},{amount:'1 liter',name:'Sangiovese Red Wine'}], steps:['Season shanks generously; sear in rondeaux until deeply browned on all sides. Remove and reserve.','In same pan, caramelize mirepoix. Add tomato paste; pincé until fond develops.','Deglaze with red wine; reduce by half. Add chicken stock.','Return shanks to braising liquid. Liquid should come halfway up shanks.','Cover and braise in 325°F oven until fork tender, approximately 2.5–3 hours.','Remove shanks carefully. Strain and reduce braising liquid to sauce consistency. Adjust seasoning.'] },
-  { id:'r41', name:'Braised Lamb Necks', category:'Proteins', yield:'2 lamb necks (~3 lb / 1360g)',
-    ingredients:[
-      {amount:'2 ea (~1360g)',name:'Lamb Necks'},
-      {amount:'275–340g',name:'Mirepoix (onion, carrot, celery)'},
-      {amount:'500ml',name:'Red Wine'},
-      {amount:'500ml',name:'Water'},
-      {amount:'250ml',name:'Lamb Demi'},
-      {amount:'20–25g',name:'Tomato Paste'},
-      {amount:'2–3 sprigs',name:'Fresh Thyme'},
-      {amount:'11–13g',name:'Kosher Salt (initial seasoning)'},
-    ],
-    steps:[
-      'Season lamb necks generously with salt. Sear in a heavy-bottomed pan or rondeaux over high heat until deeply browned on all sides. Remove and reserve.',
-      'In same pan, sweat mirepoix until softened and lightly caramelized.',
-      'Add tomato paste; cook until pincé, 2–3 minutes.',
-      'Deglaze with red wine; reduce by half, scraping up fond.',
-      'Add water and lamb demi. Return necks to pan — liquid should come roughly halfway up.',
-      'Add thyme sprigs. Cover tightly and braise at 300–325°F until completely tender and meat yields easily from bone, approximately 3–3.5 hours.',
-      'Remove necks carefully. Strain braising liquid; reduce to desired sauce consistency. Adjust seasoning before service.',
-    ]
-  },
-  { id:'r42', name:'Milk Crumbs', category:'Components', yield:'Small batch',
-    ingredients:[
-      {amount:'¼ cup + 1 T',name:'Nonfat Milk Powder (divided)'},
-      {amount:'2 T',name:'All-Purpose Flour'},
-      {amount:'1 T',name:'Cornstarch'},
-      {amount:'1½ tsp',name:'Sugar, Granulated'},
-      {amount:'⅛ tsp',name:'Salt'},
-      {amount:'1½ T',name:'Unsalted Butter, melted'},
-      {amount:'¼ cup',name:'White Chocolate, melted'},
-    ],
-    steps:[
-      'Combine 2 T + 1 tsp milk powder with flour, cornstarch, sugar, and salt. Mix in melted butter until clumps form.',
-      'Spread on a parchment-lined sheet pan. Bake at 225°F for approximately 8 minutes until dry but not browned.',
-      'Cool 10 minutes. Toss with melted white chocolate and remaining milk powder until coated.',
-      'Spread back on pan and allow to set completely before storing.',
-    ]
-  },
-  { id:'r43', name:'Fennel – Buttermilk Purée', category:'Purees & Emulsions', yield:'Per 1000g raw fennel',
-    ingredients:[
-      {amount:'1000g',name:'Fennel, trimmed and thinly sliced'},
-      {amount:'75g',name:'Butter or neutral oil (for sweating)'},
-      {amount:'600g',name:'Buttermilk, warm'},
-      {amount:'22g',name:'Ultra-Tex 8'},
-      {amount:'10–12g',name:'Kosher Salt'},
-      {amount:'optional',name:'Small squeeze lemon juice OR few drops white balsamic'},
-    ],
-    steps:[
-      'Trim fennel — remove stalks and woody core. Slice thin for even cooking.',
-      'Sweat fennel gently in butter or oil over medium-low heat. Target: fully soft, completely pale, no browning at all. Browning muddies the flavor and fights the buttermilk. Cook until completely tender — this step determines final silkiness more than the blender.',
-      'While fennel is still warm, add to blender with buttermilk, fat, and salt. Blend on high until absolutely smooth. If you see any texture at all, keep blending. Proper purée = glossy, zero graininess.',
-      'Reduce blender to medium speed until a visible vortex forms. Slowly rain in Ultra-Tex 8 — do not dump. Watch the texture shift: liquid → sauce → pudding. Stop as soon as purée holds soft peaks, moves like loose pastry cream, and has no elasticity or gumminess.',
-      'Taste. If flavor feels round or dull, add a tiny squeeze of lemon or a few drops of white balsamic. Acid sharpens the fennel and lifts the buttermilk significantly.',
-      'Texture check: should sit on a spoon without running, relax slowly when nudged, and pipe cleanly without stiffness. Too loose → add 1–2g more Ultra-Tex. Too thick → splash of buttermilk. Ultra-Tex is extremely responsive — adjust in small increments.',
-    ]
-  },
-  { id:'r44', name:'Cucumber Water', category:'Components', yield:'Pass through fine chinois',
-    ingredients:[{amount:'4 ea',name:'Cucumbers, rough chopped'},{amount:'2 T',name:'Kosher Salt'}],
-    steps:['Rough chop cucumbers.','Place in blender. Add salt.','Purée on high speed until smooth.','Pass through fine mesh chinois. Reserve cold.']
-  },
-  { id:'r45', name:'Nasturtium Vinegar', category:'Components', yield:'~2.75 cups',
-    ingredients:[{amount:'2 cups',name:'Distilled Vinegar'},{amount:'¾ cup',name:'Sugar, Granulated'},{amount:'2 tsp',name:'Shallot, minced'},{amount:'150 ea',name:'Nasturtium Blossoms'},{amount:'to taste',name:'Salt'}],
-    steps:['Place blossoms and shallots in a stainless steel or glass bowl.','Bring vinegar and sugar to a simmer, stirring until sugar dissolves.','Pour hot vinegar mixture over blossoms. Steep 15 minutes.','Place over ice bath to cool. Reserve for vinaigrette.']
-  },
-  { id:'r46', name:'Puffed Rice', category:'Components', yield:'Fry at 400°F until golden',
-    ingredients:[{amount:'1 cup',name:'Brown Rice, overcooked'},{amount:'as needed',name:'Neutral oil for frying'},{amount:'to taste',name:'Kosher Salt'}],
-    steps:['Cook rice until well past done — intentionally overcooked.','Dehydrate rice until just dry.','Fry at 400°F until golden brown and puffed.','Remove from oil, drain, season with salt immediately. Reserve.']
-  },
-  { id:'r47', name:'Grilled Spine Dashi', category:'Stocks', yield:'~1 quart',
-    ingredients:[{amount:'1 ea',name:'Fish Spine (black cod, ling cod, or halibut)'},{amount:'to taste',name:'Kombu'},{amount:'to taste',name:'Dried Shiitake Mushrooms'},{amount:'~1 qt',name:'Water'},{amount:'optional',name:'Salt, soy, or white soy to taste'}],
-    steps:['Dry spine thoroughly with paper towels.','Grill over medium-high heat, charring to desired level of smokiness.','Bring ~1 qt water to low heat. Add kombu and steep approximately 15 minutes. Remove kombu.','Add dried shiitakes and grilled spine. Simmer gently. Season to taste.','Strain before service.']
-  },
-  { id:'r48', name:'Miso Leather', category:'Components', yield:'Dehydrate 4–6 hours at 155°F',
-    ingredients:[{amount:'150g',name:'Aka-Miso (red miso)'},{amount:'150g',name:'Water'},{amount:'to taste',name:'Salt'},{amount:'to taste',name:'Ultra-Tex 8'},{amount:'to taste',name:'Xanthan Gum'},{amount:'optional',name:'Soy sauce or acid to taste'}],
-    steps:['Combine water and miso over low heat, stirring until combined and slightly warm.','Transfer to blender. Blend on high. Season with salt. Adjust with soy or acid as needed.','Bring blender back to speed and shear in xanthan gum and Ultra-Tex 8 until smooth.','Pass through tamis or drum sieve.','Spread thin and even onto a silpat-lined sheet pan.','Dehydrate at 155°F for 4–6 hours, or 185°F on convection — watch carefully. Reserve.']
-  },
-  { id:'r49', name:'Gnocchi (Pâte à Choux)', category:'Breads & Doughs', yield:'~5–6 dozen',
-    ingredients:[{amount:'1½ cups',name:'Water'},{amount:'12 T (6 oz)',name:'Unsalted Butter'},{amount:'1 T + 1 tsp',name:'Kosher Salt'},{amount:'2 cups + 2 T',name:'All-Purpose Flour, sifted'},{amount:'2 T',name:'Dijon Mustard OR 4 oz flavorful purée'},{amount:'5–6 ea',name:'Whole Eggs, room temperature'}],
-    steps:['Combine water, butter, and salt. Bring to a simmer.','Add all sifted flour at once. Stir with whisk then switch to wooden spoon or spatula.','Stir constantly until dough is tacky and pulls away from sides and bottom of pan.','Remove from heat. Transfer to stand mixer bowl with paddle attachment.','Mix on medium speed. Add mustard or purée and incorporate fully.','Add room temperature eggs one at a time, fully incorporating each before adding the next.','Reserve for service. Pipe or spoon into simmering water to order.']
-  },
-  { id:'r50', name:'Whey Gastrique', category:'Sauces', yield:'Reduce to napé consistency',
-    ingredients:[{amount:'4 qts',name:'Whey, reserved from ricotta'},{amount:'¾ cup',name:'Sugar, Granulated'},{amount:'3 cups',name:'Champagne Vinegar'},{amount:'as needed',name:'Butter'}],
-    steps:['Reduce whey by two-thirds in a wide pot. Reserve.','In a clad-bottom stainless pot, dry caramelize sugar to desired color.','Slowly add champagne vinegar to caramel — use extreme caution, steam is intense. Stir until incorporated.','Reduce by half or until napé consistency.','Slowly whisk in reduced whey. Reduce heat and continue reducing until desired acidity, sweetness, and mouthfeel are achieved.','Finish with butter to order if desired.']
-  },
-  { id:'r51', name:'Small Tomato Stew', category:'Sauces', yield:'Small batch / per order',
-    ingredients:[{amount:'1 lb',name:'Sungold, cherry, or petit heirloom tomatoes, halved'},{amount:'2 tsp',name:'Shallots, minced'},{amount:'1 tsp',name:'Garlic, minced'},{amount:'3 oz',name:'Dry White Wine'},{amount:'as needed',name:'Spine Dashi'},{amount:'to taste',name:'Fresh Thyme'},{amount:'as needed',name:'Olive Oil'}],
-    steps:['Heat saucepan over high heat. Add oil, then blister tomatoes quickly.','Add minced garlic and shallots while tomatoes are still blistering. Reduce heat and sweat until aromatic.','Add white wine. Reduce by half.','Add dashi and fresh thyme sprigs. Simmer briefly until cohesive. Season and serve immediately.']
-  },
-  { id:'r52', name:'Champagne Shallot Mustard Vinaigrette', category:'Sauces', yield:'~470g',
-    ingredients:[{amount:'110g',name:'Champagne Vinegar'},{amount:'330g',name:'Blended Oil'},{amount:'30g',name:'Shallots, fine brunoise'},{amount:'16g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'to taste',name:'Black Pepper'},{amount:'6–8g (optional)',name:'Honey'}],
-    steps:['Combine vinegar, Dijon, shallots, salt, pepper, and honey. Whisk until fully integrated.','Slowly stream in oil while whisking continuously until fully emulsified.','Optional variations: chives, tarragon, lemon zest, parsley/fines herbes, verjus splash.']
-  },
-  { id:'r53', name:'Banyuls Shallot Mustard Vinaigrette', category:'Sauces', yield:'~470g',
-    ingredients:[{amount:'125g',name:'Banyuls Vinegar'},{amount:'325g',name:'Blended Oil'},{amount:'30g',name:'Shallots, fine brunoise'},{amount:'16g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'to taste',name:'Black Pepper'},{amount:'4–6g',name:'Honey or sugar'}],
-    steps:['Combine vinegar and shallots. Rest 5–10 minutes.','Add Dijon and seasoning. Whisk thoroughly.','Slowly stream in oil while whisking until emulsified.','Optional variations: orange zest, thyme, black garlic, sherry vinegar splash, cracked coriander.']
-  },
-  { id:'r54', name:'Rice Wine Shallot Mustard Vinaigrette', category:'Sauces', yield:'~490g',
-    ingredients:[{amount:'140g',name:'Rice Wine Vinegar'},{amount:'320g',name:'Blended Oil'},{amount:'28–30g',name:'Shallots, fine brunoise'},{amount:'15g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'to taste',name:'White Pepper'},{amount:'6–8g',name:'Honey or sugar'},{amount:'5–8g (optional)',name:'Lemon Juice'}],
-    steps:['Combine vinegar and shallots. Rest 5 minutes.','Add Dijon, seasoning, and sweetener. Whisk well.','Slowly stream in oil while whisking until emulsified.','Optional variations: yuzu or lemon zest, scallions, few drops sesame oil, ginger juice, small amount cilantro.']
-  },
-  { id:'r55', name:'White Distilled Vinegar Vinaigrette', category:'Sauces', yield:'~480g',
-    ingredients:[{amount:'80g',name:'White Distilled Vinegar'},{amount:'40g',name:'Water'},{amount:'330g',name:'Blended Oil'},{amount:'30g',name:'Shallots, fine brunoise'},{amount:'16g',name:'Dijon Mustard'},{amount:'3g',name:'Kosher Salt'},{amount:'10–12g',name:'Honey or sugar'}],
-    steps:['Combine vinegar, water, and shallots. Rest 10 minutes.','Add Dijon, seasoning, and sweetener. Whisk thoroughly.','Slowly stream in oil while whisking until emulsified.','Taste and adjust carefully. Optional variations: extra honey, lemon zest, parsley/herbs, small knob melted butter.']
-  },
-  { id:'r56', name:'Carrot – Miso – Cream Purée', category:'Purees & Emulsions', yield:'Per 1000g carrots',
-    ingredients:[{amount:'1000g',name:'Carrots, peeled and thinly sliced'},{amount:'400g',name:'Heavy Cream'},{amount:'80g',name:'Butter'},{amount:'50–55g',name:'White Miso (adjust to taste)'},{amount:'to taste',name:'Salt (minimal — miso is salty)'},{amount:'4–8g (optional)',name:'Rice vinegar or lemon juice'}],
-    steps:['Slice carrots thin for even cooking.','Sweat gently in butter over medium-low heat until completely tender. Avoid browning.','Warm cream separately — do not boil.','Transfer warm carrots, cream, butter, and most of the miso to blender. Blend on high until absolutely smooth and glossy.','Taste and adjust miso incrementally. Add acid if purée feels too round or flat.','Optional: shear in Ultra-Tex 8 at 1.8–2.2% of total weight for pudding-silky texture. Xanthan at 0.15–0.25% for minor tightening only.','Optional variations: brown butter, orange zest, black garlic, ginger juice, few drops sesame oil.']
-  },
-  { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden',
-    ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}],
-    steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.']
-  },
+  { id:'r24', name:'Pomme Dauphine', category:'Components', yield:'Fry at 375°F until golden', ingredients:[{amount:'2½ lbs',name:'Russet Potatoes'},{amount:'½ cup',name:'Butter'},{amount:'1 cup',name:'Water'},{amount:'2 T',name:'Kosher Salt'},{amount:'1 cup',name:'All-Purpose Flour, Sifted'},{amount:'4 ea',name:'Eggs, Large'},{amount:'to taste',name:'Black Pepper'}], steps:['Bring butter, water, and salt to a boil. Add all flour at once; stir rapidly, lower heat, cook until ball forms and pulls from sides. Cool slightly.','Whip eggs into pâte à choux one at a time using stand mixer.','Boil potatoes until soft. Drain; dry briefly in oven. Pass through food mill.','Fold mashed potato into pâte à choux until just combined.','Roll into ¾" balls. Deep fry at 375°F until golden.'] },
 ];
 
 // ── STATE ─────────────────────────────────────────────
@@ -750,15 +563,11 @@ let pendingAdminUnlock = false;
 
 // ── AUTH STATE ────────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
-  // Admin unlock flow
   if (user && pendingAdminUnlock) {
     pendingAdminUnlock = false;
     document.getElementById('auth-overlay').classList.remove('show');
     grantAdmin();
   }
-  // Chat identity
-  chatUser = user || null;
-  updateChatAuthUI();
 });
 
 window.signInWithGoogle = async function() {
@@ -827,15 +636,11 @@ function grantAdmin() {
   document.getElementById('add-btn').style.display = 'flex';
   document.getElementById('detail-actions').style.display = 'flex';
   initApp();
-  // Re-render prep list with admin controls if it was already loaded as staff
-  if (prepItems && prepItems.length) renderPrepList(prepItems, null, null);
-  // Show upload button if on prep tab
-  document.getElementById('prep-upload-btn').style.display = 'flex';
   setTimeout(pushMissingRecipes, 2000);
 }
 
 async function pushMissingRecipes() {
-  const ids = ['h1','h2','h3','h4','h5','r24','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42','r43','r44','r45','r46','r47','r48','r49','r50','r51','r52','r53','r54','r55','r56'];
+  const ids = ['h1','h2','h3','h4','h5','r25','r26','r27','r28','r29','r30','r31','r32','r33','r34','r35','r36','r37','r38','r39','r40','r41','r42','r43'];
   for (const id of ids) {
     const exists = recipes.find(x => x.id === id);
     if (!exists) {
@@ -996,312 +801,6 @@ window.deleteRecipe = async function() {
     await deleteDoc(doc(db, 'recipes', currentRecipeId));
     hideSync(); window.closeDetail();
   } catch(e) { hideSync(); alert('Error deleting. Check your connection.'); }
-};
-
-// ── CHAT ──────────────────────────────────────────────
-let chatUser = null; // Google user object for chat
-let chatUnsubscribe = null;
-let lastSeenTimestamp = parseInt(localStorage.getItem('beck_chat_last_seen') || '0');
-let chatUnreadCount = 0;
-let currentTab = 'recipes';
-
-function updateChatAuthUI() {
-  const authed = !!chatUser;
-  const wall = document.getElementById('chat-signin-wall');
-  const chatAuthed = document.getElementById('chat-authed');
-  if (wall) wall.style.display = authed ? 'none' : 'flex';
-  if (chatAuthed) chatAuthed.style.display = authed ? 'flex' : 'none';
-  if (authed && chatAuthed) {
-    const displayName = chatUser.displayName || chatUser.email.split('@')[0];
-    document.getElementById('chat-user-name').textContent = displayName;
-    if (!chatUnsubscribe) initChat();
-  }
-}
-
-window.signInForChat = async function() {
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-    // onAuthStateChanged handles the rest
-  } catch(e) {
-    if (e.code !== 'auth/popup-closed-by-user') alert('Sign-in failed. Try again.');
-  }
-};
-
-window.signOutChat = async function() {
-  if (!confirm('Sign out of Kitchen Chat?')) return;
-  // Only sign out if NOT admin — admin stays signed in
-  if (isAdmin) {
-    // Admin: just clear chat identity display but keep auth
-    alert('You\'re signed in as Admin. Use the recipe controls to manage your session.');
-    return;
-  }
-  await signOut(auth);
-  chatUser = null;
-  if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
-  updateChatAuthUI();
-};
-
-window.switchTab = function(tab) {
-  currentTab = tab;
-  const isChat = tab === 'chat';
-  const isPrep = tab === 'prep';
-  const isRecipes = tab === 'recipes';
-  document.getElementById('tab-recipes').classList.toggle('active', isRecipes);
-  document.getElementById('tab-prep').classList.toggle('active', isPrep);
-  document.getElementById('tab-chat').classList.toggle('active', isChat);
-  document.getElementById('recipe-search-bar').style.display = isRecipes ? '' : 'none';
-  document.getElementById('cat-pills').style.display = isRecipes ? '' : 'none';
-  document.getElementById('recipe-list').style.display = isRecipes ? '' : 'none';
-  document.getElementById('prep-view').classList.toggle('active', isPrep);
-  document.getElementById('chat-view').classList.toggle('active', isChat);
-
-  if (isChat) {
-    chatUnreadCount = 0;
-    document.getElementById('chat-unread-badge').style.display = 'none';
-    lastSeenTimestamp = Date.now();
-    localStorage.setItem('beck_chat_last_seen', lastSeenTimestamp);
-    updateChatAuthUI();
-    setTimeout(() => scrollChatToBottom(), 100);
-  }
-  if (isPrep) {
-    if (!prepUnsubscribe) initPrepList();
-    document.getElementById('prep-date-text').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
-    document.getElementById('prep-upload-btn').style.display = isAdmin ? 'flex' : 'none';
-    if (isAdmin) document.getElementById('prep-empty-sub').textContent = 'Upload an Excel file to create today\'s prep list.';
-  }
-};
-
-function playMessageSound() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g);
-    g.connect(ctx.destination);
-    o.type = 'sine';
-    o.frequency.setValueAtTime(880, ctx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.15);
-    g.gain.setValueAtTime(0.25, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    o.start(ctx.currentTime);
-    o.stop(ctx.currentTime + 0.4);
-  } catch(e) {}
-}
-
-function initChat() {
-  const q = query(collection(db, 'chat_messages'), orderBy('ts', 'asc'), limit(200));
-  let isFirstLoad = true;
-  chatUnsubscribe = onSnapshot(q, (snapshot) => {
-    renderChatMessages(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
-    const myName = chatUser ? (chatUser.displayName || chatUser.email.split('@')[0]) : '';
-    if (!isFirstLoad) {
-      const newMsgs = snapshot.docChanges().filter(c => c.type === 'added' && c.doc.data().sender !== myName);
-      if (newMsgs.length > 0) playMessageSound();
-    }
-    isFirstLoad = false;
-    if (currentTab !== 'chat') {
-      const newUnread = snapshot.docs.filter(d => {
-        const ts = d.data().ts?.toMillis ? d.data().ts.toMillis() : 0;
-        return ts > lastSeenTimestamp && d.data().sender !== myName;
-      }).length;
-      if (newUnread > 0) {
-        chatUnreadCount = newUnread;
-        const badge = document.getElementById('chat-unread-badge');
-        badge.textContent = newUnread > 9 ? '9+' : newUnread;
-        badge.style.display = 'flex';
-      }
-    }
-  });
-}
-
-function renderChatMessages(messages) {
-  const container = document.getElementById('chat-messages');
-  if (!container) return;
-  if (!messages.length) {
-    container.innerHTML = `<div class="chat-empty"><div class="chat-empty-icon">💬</div><div class="chat-empty-text">No messages yet</div><div class="chat-empty-sub">Be the first to say something</div></div>`;
-    return;
-  }
-  let html = '';
-  let lastDate = '';
-  const myName = chatUser ? (chatUser.displayName || chatUser.email.split('@')[0]) : '';
-  messages.forEach(msg => {
-    const ts = msg.ts?.toMillis ? msg.ts.toMillis() : Date.now();
-    const date = new Date(ts);
-    const dateStr = date.toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' });
-    if (dateStr !== lastDate) {
-      html += `<div class="chat-day-divider">${dateStr}</div>`;
-      lastDate = dateStr;
-    }
-    const isMine = msg.sender === myName;
-    const timeStr = date.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
-    html += `<div class="chat-msg ${isMine ? 'mine' : 'theirs'}">
-      ${!isMine ? `<div class="chat-sender">${escapeHtml(msg.sender)}</div>` : ''}
-      <div class="chat-bubble">${escapeHtml(msg.text)}</div>
-      <div class="chat-time">${timeStr}</div>
-    </div>`;
-  });
-  container.innerHTML = html;
-  scrollChatToBottom();
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function scrollChatToBottom() {
-  const c = document.getElementById('chat-messages');
-  if (c) c.scrollTop = c.scrollHeight;
-}
-
-window.sendMessage = async function() {
-  if (!chatUser) return;
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  autoResizeTextarea(input);
-  const displayName = chatUser.displayName || chatUser.email.split('@')[0];
-  try {
-    await addDoc(collection(db, 'chat_messages'), {
-      text, sender: displayName, uid: chatUser.uid, ts: serverTimestamp()
-    });
-  } catch(e) { alert('Failed to send. Check your connection.'); }
-};
-
-window.chatKeydown = function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-};
-
-// ── PREP LIST ─────────────────────────────────────────
-let prepUnsubscribe = null;
-let prepItems = [];
-
-function initPrepList() {
-  prepUnsubscribe = onSnapshot(doc(db, 'prep_list', 'current'), (snapshot) => {
-    if (snapshot.exists()) {
-      const data = snapshot.data();
-      prepItems = data.items || [];
-      renderPrepList(prepItems, data.title, data.uploadedAt);
-    } else {
-      prepItems = [];
-      renderPrepList([], null, null);
-    }
-  });
-}
-
-function renderPrepList(items, title, uploadedAt) {
-  const container = document.getElementById('prep-list-container');
-  if (!items.length) {
-    container.innerHTML = `<div class="prep-empty">
-      <div class="prep-empty-icon">📋</div>
-      <div class="prep-empty-title">No Prep List</div>
-      <div class="prep-empty-sub" id="prep-empty-sub">${isAdmin ? 'Upload an Excel file to create today\'s prep list.' : 'Ask the chef to upload today\'s prep list.'}</div>
-    </div>`;
-    document.getElementById('prep-progress-fill').style.width = '0%';
-    return;
-  }
-
-  // Progress — count done vs non-section items
-  const nonSection = items.filter(i => !i.isSection);
-  const done = nonSection.filter(i => i.status === 'done').length;
-  const pct = nonSection.length > 0 ? Math.round((done / nonSection.length) * 100) : 0;
-  document.getElementById('prep-progress-fill').style.width = pct + '%';
-  if (title) document.getElementById('prep-title-text').textContent = title;
-
-  let html = '';
-  items.forEach((item, idx) => {
-    if (item.isSection) {
-      html += `<div class="prep-section-label">${escapeHtml(item.name)}</div>`;
-      return;
-    }
-    const status = item.status || 'none';
-    const isNeeded = status === 'needed';
-    const isInProgress = status === 'inprogress';
-    const isDone = status === 'done';
-    const rowClass = isDone ? 'prep-item is-done' : isNeeded ? 'prep-item is-needed' : isInProgress ? 'prep-item is-inprogress' : 'prep-item';
-    const nameClass = isDone ? 'prep-item-name is-done-text' : isNeeded ? 'prep-item-name is-needed-text' : isInProgress ? 'prep-item-name is-inprogress-text' : 'prep-item-name';
-    const qty = item.qty ? `${item.qty}${item.unit ? ' ' + item.unit : ''}` : '—';
-    html += `<div class="${rowClass}">
-      <span class="${nameClass}">${escapeHtml(item.name)}</span>
-      <span class="prep-item-qty">${escapeHtml(qty)}</span>
-      <button class="prep-mark-btn n-btn ${isNeeded ? 'active' : ''}" onclick="setPrepStatus(${idx}, 'needed')">✕</button>
-      <button class="prep-mark-btn p-btn ${isInProgress ? 'active' : ''}" onclick="setPrepStatus(${idx}, 'inprogress')">…</button>
-      <button class="prep-mark-btn d-btn ${isDone ? 'active' : ''}" onclick="setPrepStatus(${idx}, 'done')">✓</button>
-    </div>`;
-  });
-
-  html += `<button class="prep-reset-btn" onclick="resetPrepList()">Reset All</button>`;
-  container.innerHTML = html;
-}
-
-window.setPrepStatus = async function(idx, newStatus) {
-  const item = prepItems[idx];
-  if (!item || item.isSection) return;
-  // Toggle off if already that status
-  const current = item.status || 'none';
-  const finalStatus = current === newStatus ? 'none' : newStatus;
-  prepItems[idx] = { ...item, status: finalStatus };
-  playMessageSound();
-  try {
-    await setDoc(doc(db, 'prep_list', 'current'), { items: prepItems }, { merge: true });
-  } catch(e) { console.error('Prep update failed', e); }
-};
-
-window.resetPrepList = async function() {
-  if (!confirm('Reset all items?')) return;
-  const reset = prepItems.map(i => i.isSection ? i : { ...i, status: 'none' });
-  await setDoc(doc(db, 'prep_list', 'current'), { items: reset }, { merge: true });
-};
-
-window.handlePrepUpload = async function(event) {
-  if (!isAdmin) return;
-  const file = event.target.files[0];
-  if (!file) return;
-  showSync('Parsing prep list…');
-  try {
-    const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs');
-    const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf);
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-
-    const SECTION_KEYWORDS = ['proteins','sauces','purees','garnishes','breads','misc','notes','desserts','components','stocks','sides','fish','meat','vegetable','dairy','starch'];
-    const items = [];
-    rows.forEach(row => {
-      const name = row[0] ? String(row[0]).trim() : null;
-      if (!name) return;
-      const qty = row[1] !== null && row[1] !== undefined ? String(row[1]).trim() : '';
-      const unit = row[2] ? String(row[2]).trim() : '';
-      // Detect section headers:
-      // 1. No qty and no unit
-      // 2. Name matches known section keywords (case-insensitive)
-      // 3. Has qty but no unit AND name looks like a category (short, title-case, no numbers)
-      const nameLower = name.toLowerCase();
-      const matchesKeyword = SECTION_KEYWORDS.some(k => nameLower.includes(k));
-      const noUnit = !unit || unit === '';
-      const isSection = (!qty && noUnit) || matchesKeyword || (noUnit && name.length < 40 && !/\d/.test(name) && name === name.replace(/[a-z]/g, c => c) + name.replace(/[A-Z]/g, c => c));
-      items.push({ name, qty: isSection ? '' : qty, unit: isSection ? '' : unit, isSection: !!isSection, status: 'needed' });
-    });
-
-    const title = file.name.replace(/\.(xlsx|xls)$/i, '');
-    await setDoc(doc(db, 'prep_list', 'current'), {
-      items, title,
-      uploadedAt: serverTimestamp(),
-      uploadedBy: chatUser ? (chatUser.displayName || chatUser.email) : 'Admin'
-    });
-    hideSync();
-    event.target.value = '';
-  } catch(e) {
-    hideSync();
-    console.error(e);
-    alert('Failed to parse Excel file. Make sure it\'s a valid .xlsx file.');
-  }
-};
-
-window.autoResizeTextarea = function(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
 };
 </script>
 </body>
