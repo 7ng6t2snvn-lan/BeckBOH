@@ -145,6 +145,25 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .del-btn { width: 100%; padding: 12px; border-radius: 12px; background: transparent; border: 1px solid var(--danger); color: var(--danger); font-family: var(--sans); font-size: 14px; cursor: pointer; margin-top: 10px; transition: all 0.15s; }
 .del-btn:active { background: rgba(192,97,74,0.1); }
 
+/* NEEDS LIST */
+#needs-view { display: none; flex-direction: column; padding-bottom: 80px; }
+#needs-view.active { display: flex; flex-direction: column; }
+.needs-header-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 1px solid var(--border); }
+.needs-header-title { font-family: var(--serif); font-size: 22px; font-weight: 300; }
+.needs-add-btn { background: var(--accent); border: none; color: #0d0d0b; font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+.needs-date-group { margin: 0 0 4px; }
+.needs-date-label { font-family: var(--serif); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); padding: 14px 16px 6px; border-top: 1px solid var(--border); display: block; }
+.needs-date-label:first-child { border-top: none; }
+.needs-cat-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding: 6px 16px 2px; }
+.needs-item { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); gap: 10px; }
+.needs-item-name { flex: 1; font-size: 14px; color: var(--text); }
+.needs-item-note { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.needs-item-del { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 4px 6px; flex-shrink: 0; }
+.needs-item-del:active { color: var(--danger); }
+.needs-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.needs-empty-icon { font-size: 36px; margin-bottom: 12px; }
+.needs-empty-text { font-family: var(--serif); font-size: 18px; color: var(--text-dim); }
+
 /* NAV TABS */
 .nav-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 58px; z-index: 90; }
 .nav-tab { flex: 1; padding: 10px; text-align: center; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; position: relative; }
@@ -281,6 +300,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
       <div class="nav-tab active" id="tab-recipes" onclick="switchTab('recipes')">Recipes</div>
       <div class="nav-tab" id="tab-prep" onclick="switchTab('prep')">Prep List</div>
       <div class="nav-tab" id="tab-chat" onclick="switchTab('chat')">Chat <span class="chat-badge" id="chat-unread-badge" style="display:none;"></span></div>
+      <div class="nav-tab" id="tab-needs" onclick="switchTab('needs')">Needs <span class="chat-badge" id="needs-unread-badge" style="display:none;"></span></div>
     </div>
     <div class="search-bar" id="recipe-search-bar">
       <div class="search-wrap">
@@ -352,6 +372,54 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
       </div>
     </div>
   </div>
+
+
+    <!-- NEEDS LIST VIEW -->
+    <div id="needs-view">
+      <div class="needs-header-bar">
+        <div class="needs-header-title">Needs List</div>
+        <button class="needs-add-btn" onclick="openNeedsAdd()">+ Add Item</button>
+      </div>
+      <div id="needs-list-container">
+        <div class="needs-empty">
+          <div class="needs-empty-icon">📝</div>
+          <div class="needs-empty-text">No items yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEEDS ADD MODAL -->
+    <div class="modal-overlay" id="needs-modal" onclick="closeNeedsModal(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Add to Needs List</div>
+        <div class="form-field">
+          <label class="form-label">Item Name</label>
+          <input class="form-input" id="needs-name" type="text" placeholder="e.g. Wagyu ribeye, 10 lbs">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="needs-cat">
+            <option value="Proteins">Proteins</option>
+            <option value="Produce">Produce</option>
+            <option value="Dairy">Dairy</option>
+            <option value="Dry Goods">Dry Goods</option>
+            <option value="Chemicals & Supplies">Chemicals &amp; Supplies</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Date Needed</label>
+          <input class="form-input" id="needs-date" type="date">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Notes (optional)</label>
+          <input class="form-input" id="needs-note" type="text" placeholder="e.g. for Saturday dinner service">
+        </div>
+        <button class="form-btn" onclick="saveNeedsItem()">Add to List</button>
+        <button class="form-btn secondary" onclick="closeNeedsModal()">Cancel</button>
+      </div>
+    </div>
 
   <div class="detail-view" id="detail-view">
     <div class="detail-header">
@@ -729,6 +797,69 @@ const DEFAULT_RECIPES = [
   { id:'r56', name:'Carrot – Miso – Cream Purée', category:'Purees & Emulsions', yield:'Per 1000g carrots',
     ingredients:[{amount:'1000g',name:'Carrots, peeled and thinly sliced'},{amount:'400g',name:'Heavy Cream'},{amount:'80g',name:'Butter'},{amount:'50–55g',name:'White Miso (adjust to taste)'},{amount:'to taste',name:'Salt (minimal — miso is salty)'},{amount:'4–8g (optional)',name:'Rice vinegar or lemon juice'}],
     steps:['Slice carrots thin for even cooking.','Sweat gently in butter over medium-low heat until completely tender. Avoid browning.','Warm cream separately — do not boil.','Transfer warm carrots, cream, butter, and most of the miso to blender. Blend on high until absolutely smooth and glossy.','Taste and adjust miso incrementally. Add acid if purée feels too round or flat.','Optional: shear in Ultra-Tex 8 at 1.8–2.2% of total weight for pudding-silky texture. Xanthan at 0.15–0.25% for minor tightening only.','Optional variations: brown butter, orange zest, black garlic, ginger juice, few drops sesame oil.']
+  },
+      {amount:'2 cups',name:'Kosher Salt'},
+      {amount:'½ cup',name:'Sugar'},
+      {amount:'25g',name:'Pink Salt (curing salt)'},
+      {amount:'3 cloves',name:'Garlic'},
+      {amount:'2 tsp',name:'Black Peppercorns'},
+      {amount:'2 tsp',name:'Mustard Seed'},
+      {amount:'2 tsp',name:'Coriander'},
+      {amount:'2 tsp',name:'Red Pepper Flake'},
+      {amount:'2 tsp',name:'Allspice Berry'},
+      {amount:'½ tsp',name:'Mace'},
+      {amount:'2 ea',name:'Cinnamon Stick'},
+      {amount:'7 ea',name:'Bay Leaves'},
+      {amount:'1 tsp',name:'Cloves'},
+      {amount:'½ tsp',name:'Ginger, Ground'},
+    ],
+    steps:[
+      'Combine all ingredients in a pot. Bring to a boil, stirring until salt and sugar fully dissolve.',
+      'Cool completely before using. Submerge protein fully in brine. Refrigerate.',
+      'Brine time varies by protein size and desired cure depth.',
+    ]
+  },
+      {amount:'25g',name:'Dried Shrimp'},
+      {amount:'120g',name:'Shallots, very finely diced'},
+      {amount:'35g',name:'Garlic, minced'},
+      {amount:'20g',name:'Ginger, minced'},
+      {amount:'20–30g',name:'Dried Chilies — preferred blend for Wagyu: 70% Facing Heaven / 30% Tien Tsin'},
+      {amount:'250g',name:'Neutral Oil (grapeseed or peanut)'},
+      {amount:'25g',name:'Sesame Oil'},
+      {amount:'18g',name:'Light Soy Sauce'},
+      {amount:'6g',name:'Sugar'},
+      {amount:'½ tsp',name:'White Pepper'},
+      {amount:'optional pinch',name:'MSG'},
+      {amount:'20g (optional)',name:'Jinhua Ham or Prosciutto, micro-diced'},
+      {amount:'small splash (optional)',name:'Shaoxing Wine'},
+    ],
+    steps:[
+      'Soak scallops and shrimp in warm water 30–45 minutes. Drain well, reserve soaking liquid. Shred scallops by hand, roughly chop shrimp. Do not purée.',
+      'Heat neutral oil over medium-low heat. Cook shallots slowly until lightly golden. Add garlic and ginger; cook gently — avoid browning.',
+      'Add scallops and shrimp. Cook gently, stirring, until moisture cooks out and aromas deepen. Add a small spoon of soaking liquid if needed.',
+      'Add chilies, soy sauce, sugar, white pepper, and optional wine or MSG. Continue cooking gently until oil becomes aromatic and lightly tinted.',
+      'Remove from heat. Stir in sesame oil. Cool completely before storing. Refrigerate — flavor improves significantly after 48 hours.',
+    ]
+  },
+      {amount:'60g',name:'Champagne Vinegar'},
+      {amount:'40g',name:'Shallot, minced'},
+      {amount:'8g (optional)',name:'Fresh Ginger, sliced'},
+      {amount:'2g',name:'Kosher Salt'},
+      {amount:'90g',name:'Fresh Yuzu Juice (or 70g yuzu + 20g lime)'},
+      {amount:'5g',name:'Yuzu Zest, microplaned'},
+      {amount:'300g',name:'Cold Unsalted European Butter, 82–84% fat, diced'},
+      {amount:'20g',name:'Ice-Cold Water (viscosity adjustment)'},
+      {amount:'1–2g (optional)',name:'White Soy'},
+      {amount:'to taste',name:'Fine Salt'},
+    ],
+    steps:[
+      'Combine wine, champagne vinegar, shallot, ginger, and salt. Reduce to au sec — approximately 60–70g remaining. Strain and reserve warm.',
+      'Warm reduction gently. Whisk in yuzu juice and zest.',
+      'Mount cold diced butter slowly off heat, maintaining 55–60°C. Do not boil.',
+      'Adjust viscosity with ice-cold water if needed. Add white soy if using. Season with fine salt.',
+      'Strain through fine chinois for a refined finish if desired.',
+      'Hold at 50–55°C for service. Designed for dashi-poached black cod, Asian pear, spinach purée, daikon, and toasted nori.',
+    ]
   },
   { id:'r57', name:'Corning Brine', category:'Cures & Preserved', yield:'1 gallon',
     ingredients:[
@@ -1119,14 +1250,17 @@ window.switchTab = function(tab) {
   const isChat = tab === 'chat';
   const isPrep = tab === 'prep';
   const isRecipes = tab === 'recipes';
+  const isNeeds = tab === 'needs';
   document.getElementById('tab-recipes').classList.toggle('active', isRecipes);
   document.getElementById('tab-prep').classList.toggle('active', isPrep);
   document.getElementById('tab-chat').classList.toggle('active', isChat);
+  document.getElementById('tab-needs').classList.toggle('active', isNeeds);
   document.getElementById('recipe-search-bar').style.display = isRecipes ? '' : 'none';
   document.getElementById('cat-pills').style.display = isRecipes ? '' : 'none';
   document.getElementById('recipe-list').style.display = isRecipes ? '' : 'none';
   document.getElementById('prep-view').classList.toggle('active', isPrep);
   document.getElementById('chat-view').classList.toggle('active', isChat);
+  document.getElementById('needs-view').classList.toggle('active', isNeeds);
 
   if (isChat) {
     chatUnreadCount = 0;
@@ -1141,6 +1275,12 @@ window.switchTab = function(tab) {
     document.getElementById('prep-date-text').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
     document.getElementById('prep-upload-btn').style.display = isAdmin ? 'flex' : 'none';
     if (isAdmin) document.getElementById('prep-empty-sub').textContent = 'Upload an Excel file to create today\'s prep list.';
+  }
+  if (isNeeds) {
+    needsUnreadCount = 0;
+    document.getElementById('needs-unread-badge').style.display = 'none';
+    localStorage.setItem('beck_needs_last_seen', Date.now());
+    if (!needsUnsubscribe) initNeedsList();
   }
 };
 
@@ -1375,6 +1515,144 @@ window.autoResizeTextarea = function(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 100) + 'px';
 };
+
+// ── NEEDS LIST ────────────────────────────────────────
+let needsUnsubscribe = null;
+let needsUnreadCount = 0;
+let needsLastSeen = parseInt(localStorage.getItem('beck_needs_last_seen') || '0');
+const NEEDS_CATS = ['Proteins','Produce','Dairy','Dry Goods','Chemicals & Supplies','Other'];
+
+function initNeedsList() {
+  const q = query(collection(db, 'needs_list'), orderBy('dateNeeded', 'asc'), orderBy('createdAt', 'asc'));
+  let isFirstLoad = true;
+  needsUnsubscribe = onSnapshot(q, (snapshot) => {
+    const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderNeedsList(items);
+    if (!isFirstLoad) {
+      // Check for new items added after last seen
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          const item = change.doc.data();
+          const addedAt = item.createdAt?.toMillis?.() || 0;
+          if (addedAt > needsLastSeen) {
+            if (currentTab !== 'needs') {
+              needsUnreadCount++;
+              const badge = document.getElementById('needs-unread-badge');
+              badge.textContent = needsUnreadCount > 9 ? '9+' : needsUnreadCount;
+              badge.style.display = 'flex';
+              playMessageSound();
+            }
+          }
+        }
+      });
+    }
+    isFirstLoad = false;
+  });
+}
+
+function renderNeedsList(items) {
+  const container = document.getElementById('needs-list-container');
+  if (!items.length) {
+    container.innerHTML = '<div class="needs-empty"><div class="needs-empty-icon">📝</div><div class="needs-empty-text">No items yet — add what you need</div></div>';
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  items.forEach(item => {
+    const key = item.dateNeeded || 'No Date';
+    if (!groups[key]) groups[key] = {};
+    const cat = item.category || 'Other';
+    if (!groups[key][cat]) groups[key][cat] = [];
+    groups[key][cat].push(item);
+  });
+
+  // Sort date keys
+  const sortedDates = Object.keys(groups).sort((a, b) => {
+    if (a === 'No Date') return 1;
+    if (b === 'No Date') return -1;
+    return a.localeCompare(b);
+  });
+
+  let html = '';
+  sortedDates.forEach(dateKey => {
+    const label = dateKey === 'No Date' ? 'No Date' : formatNeedsDate(dateKey);
+    html += `<div class="needs-date-group">`;
+    html += `<span class="needs-date-label">${label}</span>`;
+    NEEDS_CATS.forEach(cat => {
+      if (!groups[dateKey][cat]) return;
+      html += `<div class="needs-cat-label">${cat}</div>`;
+      groups[dateKey][cat].forEach(item => {
+        html += `<div class="needs-item">
+          <div style="flex:1;">
+            <div class="needs-item-name">${escapeHtml(item.name)}</div>
+            ${item.note ? `<div class="needs-item-note">${escapeHtml(item.note)}</div>` : ''}
+          </div>
+          <button class="needs-item-del" onclick="deleteNeedsItem('${item.id}')" title="Remove">×</button>
+        </div>`;
+      });
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function formatNeedsDate(dateStr) {
+  // dateStr is YYYY-MM-DD
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  if (date.getTime() === today.getTime()) return 'Today — ' + date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  if (date.getTime() === tomorrow.getTime()) return 'Tomorrow — ' + date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  return date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+}
+
+window.openNeedsAdd = function() {
+  // Set default date to today
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,'0');
+  const d = String(today.getDate()).padStart(2,'0');
+  document.getElementById('needs-date').value = `${y}-${m}-${d}`;
+  document.getElementById('needs-name').value = '';
+  document.getElementById('needs-note').value = '';
+  document.getElementById('needs-cat').value = 'Proteins';
+  document.getElementById('needs-modal').classList.add('open');
+  setTimeout(() => document.getElementById('needs-name').focus(), 300);
+};
+
+window.closeNeedsModal = function(e) {
+  if (!e || e.target === document.getElementById('needs-modal'))
+    document.getElementById('needs-modal').classList.remove('open');
+};
+
+window.saveNeedsItem = async function() {
+  const name = document.getElementById('needs-name').value.trim();
+  if (!name) { alert('Please enter an item name.'); return; }
+  const cat = document.getElementById('needs-cat').value;
+  const dateNeeded = document.getElementById('needs-date').value;
+  const note = document.getElementById('needs-note').value.trim();
+  try {
+    await addDoc(collection(db, 'needs_list'), {
+      name, category: cat, dateNeeded, note,
+      createdAt: serverTimestamp()
+    });
+    document.getElementById('needs-modal').classList.remove('open');
+  } catch(e) {
+    alert('Error saving. Check your connection.');
+  }
+};
+
+window.deleteNeedsItem = async function(id) {
+  if (!confirm('Remove this item from the needs list?')) return;
+  try {
+    await deleteDoc(doc(db, 'needs_list', id));
+  } catch(e) {
+    alert('Error deleting. Check your connection.');
+  }
+};
+
 </script>
 </body>
 </html>
