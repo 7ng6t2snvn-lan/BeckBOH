@@ -1231,9 +1231,7 @@ function renderPrepList(items, title, uploadedAt) {
     </div>`;
   });
 
-  if (isAdmin) {
-    html += `<button class="prep-reset-btn" onclick="resetPrepList()">Reset All</button>`;
-  }
+  html += `<button class="prep-reset-btn" onclick="resetPrepList()">Reset All</button>`;
   container.innerHTML = html;
 }
 
@@ -1251,7 +1249,6 @@ window.setPrepStatus = async function(idx, newStatus) {
 };
 
 window.resetPrepList = async function() {
-  if (!isAdmin) return;
   if (!confirm('Reset all items?')) return;
   const reset = prepItems.map(i => i.isSection ? i : { ...i, status: 'none' });
   await setDoc(doc(db, 'prep_list', 'current'), { items: reset }, { merge: true });
