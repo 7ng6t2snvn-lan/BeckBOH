@@ -160,6 +160,11 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .needs-item-note { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 .needs-item-del { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 4px 6px; flex-shrink: 0; }
 .needs-item-del:active { color: var(--danger); }
+.needs-item-strike { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; padding: 4px 6px; flex-shrink: 0; line-height: 1; }
+.needs-item-strike:active { color: var(--accent); }
+.needs-item.is-struck { opacity: 0.45; }
+.needs-item.is-struck .needs-item-name { text-decoration: line-through; color: var(--text-muted); }
+.needs-item.is-struck .needs-item-note { text-decoration: line-through; }
 .needs-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
 .needs-empty-icon { font-size: 36px; margin-bottom: 12px; }
 .needs-empty-text { font-family: var(--serif); font-size: 18px; color: var(--text-dim); }
@@ -464,7 +469,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, setDoc, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, setDoc, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -1520,11 +1525,14 @@ function renderNeedsList(items) {
       if (!groups[dateKey][cat]) return;
       html += `<div class="needs-cat-label">${cat}</div>`;
       groups[dateKey][cat].forEach(item => {
-        html += `<div class="needs-item">
+        const struckClass = item.struck ? ' is-struck' : '';
+        const strikeBtn = isAdmin ? `<button class="needs-item-strike" onclick="toggleNeedsStruck('${item.id}', ${!!item.struck})" title="${item.struck ? 'Unmark' : 'Mark picked up'}">${item.struck ? '↩' : '✓'}</button>` : '';
+        html += `<div class="needs-item${struckClass}">
           <div style="flex:1;">
             <div class="needs-item-name">${escapeHtml(item.name)}</div>
             ${item.note ? `<div class="needs-item-note">${escapeHtml(item.note)}</div>` : ''}
           </div>
+          ${strikeBtn}
           <button class="needs-item-del" onclick="deleteNeedsItem('${item.id}')" title="Remove">×</button>
         </div>`;
       });
@@ -1578,6 +1586,14 @@ window.saveNeedsItem = async function() {
     document.getElementById('needs-modal').classList.remove('open');
   } catch(e) {
     alert('Error saving. Check your connection.');
+  }
+};
+
+window.toggleNeedsStruck = async function(id, currentlyStruck) {
+  try {
+    await updateDoc(doc(db, 'needs_list', id), { struck: !currentlyStruck });
+  } catch(e) {
+    alert('Error updating item. Check your connection.');
   }
 };
 
