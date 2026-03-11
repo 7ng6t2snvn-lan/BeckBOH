@@ -14,8 +14,8 @@ button:active { opacity: 0.8; }
 </head>
 <body>
 <h2>Beck Kitchen — Firestore Cleanup</h2>
-<p>This will delete all duplicate entries for Corning Brine, XO Sauce, and Yuzu Beurre Blanc from Firestore, then write the correct single version of each (including updated XO Sauce quart yield).</p>
-<button onclick="runCleanup()">Run Cleanup</button>
+<p>This will fix duplicate entries for r57/r58/r59, and also write the four new recipes (Brown Butter Beurre Blanc, House Champagne Vinaigrette, Beck Herb Oil, Spaetzle) directly to Firestore.</p>
+<button onclick="runCleanup()">Run Cleanup + Add New Recipes</button>
 <div id="log">Ready. Press the button to begin...</div>
 
 <script type="module">
@@ -110,6 +110,83 @@ const CORRECT_RECIPES = [
       'Hold at 50–55°C for service. Designed for dashi-poached black cod, Asian pear, spinach purée, daikon, and toasted nori.',
     ]
   },
+  { id:'r60', name:'Brown Butter Beurre Blanc', category:'Sauces', yield:'~2.6L — 70 × 1.1oz portions',
+    ingredients:[
+      {amount:'1.6 kg', name:'Unsalted butter (to brown)'},
+      {amount:'400 g',  name:'Dry white wine'},
+      {amount:'200 g',  name:'Champagne vinegar'},
+      {amount:'220 g',  name:'Shallots, very fine brunoise'},
+      {amount:'160 g',  name:'Heavy cream (stabilizer)'},
+      {amount:'16 g',   name:'Kosher salt'},
+      {amount:'5 g',    name:'White pepper'},
+      {amount:'30 g',   name:'Pernod or Pastis (optional but recommended)'},
+      {amount:'40 g',   name:'Lemon juice, to finish'}
+    ],
+    steps:[
+      'Brown the butter in batches in a wide rondeau over medium heat, stirring constantly. Cook until deep golden and nutty — solids should be amber, not black. Strain immediately through a fine chinois. Reserve warm.',
+      'Combine wine, champagne vinegar, and shallots in a saucepan. Reduce over medium heat until nearly dry — about 2–3 tablespoons remaining. Shallots should be completely soft, pan almost au sec.',
+      'Add heavy cream to the reduction. Bring to a simmer and reduce by half. This is your stabilizing base.',
+      'Over low heat, mount the brown butter into the cream-reduction base using an immersion blender or whisking vigorously, adding in a slow steady stream. Sauce will emulsify and thicken to nappé.',
+      'Add Pernod or Pastis if using. Finish with lemon juice. Taste and adjust salt and white pepper.',
+      'Hold in a bain marie at 130–140°F. Do not boil. Stir gently before each pull. If it tightens, loosen with a small splash of warm cream or wine.'
+    ]
+  },
+  { id:'r61', name:'House Champagne Vinaigrette', category:'Sauces', yield:'1 Liter',
+    ingredients:[
+      {amount:'750 g', name:'Grapeseed oil'},
+      {amount:'250 g', name:'Champagne vinegar'},
+      {amount:'38 g',  name:'Dijon mustard'},
+      {amount:'25 g',  name:'Honey'},
+      {amount:'12 g',  name:'Shallot, minced fine'},
+      {amount:'0.5 g', name:'Xanthan gum (optional — for service stability)'},
+      {amount:'',      name:'Salt and white pepper, to taste'}
+    ],
+    steps:[
+      'Combine minced shallot with a small amount of champagne vinegar in a small pan. Sweat over low heat 2–3 minutes until softened. Cool completely.',
+      'Add all champagne vinegar, Dijon, honey, and cooled shallot to a blender or bowl. If using xanthan gum, add now and hydrate 2 minutes before proceeding.',
+      'Blending method: with blender on low, stream grapeseed oil in slowly. Increase speed once half the oil is in. Whisking method: whisk vigorously while streaming oil in a thin steady drizzle.',
+      'Season assertively with salt and white pepper — vinaigrette needs more salt than you expect. Season until acid and oil are in balance.',
+      'Rest 30 minutes before service. Emulsion tightens and flavors marry. Taste again before plating.',
+      'Dress to order. Shake or whisk briefly before each use. Xanthan version holds through full service; non-xanthan version re-emulsify between passes. Shelf life 5–7 days refrigerated.'
+    ]
+  },
+  { id:'r62', name:'Beck Herb Oil', category:'Sauces', yield:'~300–330g finished oil',
+    ingredients:[
+      {amount:'40 g', name:'Flat-leaf parsley'},
+      {amount:'30 g', name:'Basil'},
+      {amount:'20 g', name:'Chervil'},
+      {amount:'15 g', name:'Chives'},
+      {amount:'15 g', name:'Tarragon'},
+      {amount:'10 g', name:'Spinach (optional — for color stability)'},
+      {amount:'240 g',name:'Grapeseed oil'}
+    ],
+    steps:[
+      'Bring a large pot of well-salted water to a rolling boil. Prepare an ice bath.',
+      'Blanch all herbs together for exactly 10 seconds. Shock immediately in ice water.',
+      'Squeeze herbs completely dry — any residual water will prevent emulsification and dull the color.',
+      'Combine dry herbs and grapeseed oil in VitaPrep. Blend on high 1–2 minutes until mixture heats from friction and turns vivid green.',
+      'Strain immediately through a Superbag or chinois lined with a coffee filter. Do not press — let drip freely 30–60 minutes. Pressing will cloud the oil.',
+      'Transfer to squeeze bottle. Should be vivid green, clear, and clean-tasting. Refrigerate — use within 3–4 days for best color.'
+    ]
+  },
+  { id:'r63', name:'Spaetzle', category:'Breads & Doughs', yield:'~4–6 portions',
+    ingredients:[
+      {amount:'4',       name:'Egg yolks'},
+      {amount:'1',       name:'Whole egg'},
+      {amount:'1.75 c',  name:'Whole milk'},
+      {amount:'1 lb',    name:'All-purpose flour, sifted'},
+      {amount:'0.5 tsp', name:'Caraway seed, toasted and ground'},
+      {amount:'2 oz',    name:'Unsalted butter, melted'}
+    ],
+    steps:[
+      'Toast caraway seeds in a dry pan over medium heat until fragrant, about 2 minutes. Grind fine in a spice grinder.',
+      'Whisk together egg yolks, whole egg, and milk until combined.',
+      'Sift flour into a separate bowl. Stir in ground caraway.',
+      'Add flour mixture to wet ingredients in alternating additions with the melted butter, stirring between each addition. Batter should be thick, smooth, and fall in a slow ribbon.',
+      'Bring a large pot of well-salted water to a boil. Press batter through a spaetzle maker or large-holed colander directly into water. Cook until spaetzle float and are tender, about 2–3 minutes.',
+      'Remove with a spider. Spread on oiled sheet pan to cool if finishing later. To finish: sauté in brown butter over high heat until golden and lightly crisped at the edges.'
+    ]
+  },
 ];
 
 const log = document.getElementById('log');
@@ -126,7 +203,8 @@ window.runCleanup = async function() {
     return;
   }
 
-  const targetIds = ['r57', 'r58', 'r59'];
+
+  const dedupIds = ['r57', 'r58', 'r59'];
 
   print('Fetching all recipes from Firestore...');
   const snap = await getDocs(collection(db, 'recipes'));
@@ -134,8 +212,8 @@ window.runCleanup = async function() {
   snap.forEach(d => allDocs.push({ docId: d.id, data: d.data() }));
   print(`Found ${allDocs.length} total recipe documents.\n`);
 
-  // Find and delete ALL documents whose data.id is r57/r58/r59
-  for (const targetId of targetIds) {
+  // Delete duplicates of r57/r58/r59 then rewrite all
+  for (const targetId of dedupIds) {
     const matches = allDocs.filter(d => d.data.id === targetId);
     print(`Found ${matches.length} document(s) with id='${targetId}':`);
     for (const m of matches) {
@@ -145,10 +223,10 @@ window.runCleanup = async function() {
     }
   }
 
-  print('\nWriting correct versions...');
+  print('\nWriting all recipes (r57–r63)...');
   for (const recipe of CORRECT_RECIPES) {
     await setDoc(doc(db, 'recipes', recipe.id), recipe);
-    print(`✓ Wrote ${recipe.name} (${recipe.yield})`);
+    print(`✓ Wrote: ${recipe.name}`);
   }
 
   print('\n✅ Done! Refresh the Beck Kitchen app.');
