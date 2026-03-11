@@ -693,6 +693,87 @@ const DEFAULT_RECIPES = [
   { id:'r21', name:'Lemon Curd', category:'Desserts', yield:'~2 cups', ingredients:[{amount:'½ cup',name:'Unsalted Butter'},{amount:'¼ cup',name:'Crème Fraîche'},{amount:'2 ea',name:'Eggs, Whole'},{amount:'3 ea',name:'Egg Yolks'},{amount:'¾ cup',name:'Fresh Lemon Juice'},{amount:'¾ cup',name:'Sugar'},{amount:'1½ tsp',name:'Lemon Zest'}], steps:['Melt butter and crème fraîche together over a double boiler. Set aside.','In a bowl over simmering water, whisk eggs and yolks until warmed. Beat in butter mixture, then lemon juice.','Strain through a sieve into a clean bowl. Return to simmering water.','Add sugar and zest; whisk until warm to touch, about 4 minutes. Chill immediately.'] },
   { id:'r22', name:'Lemon Tart (Sabayon & Pâte Sablée)', category:'Desserts', yield:'One 10" tart', ingredients:[{amount:'2 ea',name:'Eggs, Cold'},{amount:'2 ea',name:'Egg Yolks, Cold'},{amount:'¾ cup',name:'Sugar'},{amount:'½ cup',name:'Fresh Lemon Juice'},{amount:'6 T',name:'Unsalted Butter, Cold'},{amount:'¾ lb',name:'Butter (for dough)'},{amount:'3½ cups',name:'Flour (for dough)'},{amount:'4 ea',name:'Eggs (for dough)'},{amount:'½ cup',name:'Sugar (for dough)'},{amount:'4 T',name:'Cold Water'}], steps:['Pâte Sablée: Combine flour and sugar; cut in cold butter. Add eggs and water; mix until dough just comes together. Refrigerate.','Roll and blind bake tart shell at 350°F until golden. Cool.','Lemon Sabayon: Whisk cold eggs, yolks, sugar, and lemon juice in a bowl over simmering water.','Whisk continuously until thick and ribbon-like, ~8–10 minutes.','Remove from heat; whisk in cold butter pieces one at a time.','Pour into baked shell. Torch if desired. Chill to set.'] },
   { id:'r23', name:'Lace Cookies / Décor', category:'Desserts', yield:'Watch closely — burns fast', ingredients:[{amount:'5 oz',name:'Corn Syrup'},{amount:'5 oz',name:'Butter, Unsalted'},{amount:'5 oz',name:'Sugar'},{amount:'5 oz',name:'All-Purpose Flour'}], steps:['Combine corn syrup, butter, and sugar. Cook to a boil, stirring.','Remove from heat; stir in flour until incorporated.','Drop small spoonfuls onto silpat-lined sheet pan. Bake at 325°F until spread and golden.','Cool briefly; shape while still pliable over molds or cylinders.'] },
+
+  { id:'r60', name:'Brown Butter Beurre Blanc', category:'Sauces', yield:'~2.6L — 70 × 1.1oz portions',
+    ingredients:[
+      {amount:'1.6 kg', name:'Unsalted butter (to brown)'},
+      {amount:'400 g',  name:'Dry white wine'},
+      {amount:'200 g',  name:'Champagne vinegar'},
+      {amount:'220 g',  name:'Shallots, very fine brunoise'},
+      {amount:'160 g',  name:'Heavy cream (stabilizer)'},
+      {amount:'16 g',   name:'Kosher salt'},
+      {amount:'5 g',    name:'White pepper'},
+      {amount:'30 g',   name:'Pernod or Pastis (optional but recommended)'},
+      {amount:'40 g',   name:'Lemon juice, to finish'}
+    ],
+    steps:[
+      'Brown the butter in batches in a wide rondeau over medium heat, stirring constantly. Cook until deep golden and nutty — solids should be amber, not black. Strain immediately through a fine chinois into a clean container. Reserve warm.',
+      'In a separate saucepan, combine wine, champagne vinegar, and shallots. Reduce over medium heat until nearly dry — about 2–3 tablespoons of liquid remaining. The shallots should be completely soft and the pan almost au sec.',
+      'Add heavy cream to the reduction. Bring to a simmer and reduce by half. This is your stabilizing base — do not skip.',
+      'Over low heat, mount the brown butter into the cream-reduction base using an immersion blender or whisking vigorously, adding in a slow steady stream. The sauce will emulsify and thicken to a nappé consistency.',
+      'Add Pernod or Pastis if using — it amplifies the anise notes and adds depth. Finish with lemon juice. Taste and adjust salt and white pepper.',
+      'Hold in a bain marie at 130–140°F. Do not boil or the emulsion will break. Stir gently before each pull. If it tightens too much, loosen with a small splash of warm cream or wine.'
+    ]
+  },
+
+  { id:'r61', name:'House Champagne Vinaigrette', category:'Sauces', yield:'1 Liter',
+    ingredients:[
+      {amount:'750 g', name:'Grapeseed oil'},
+      {amount:'250 g', name:'Champagne vinegar'},
+      {amount:'38 g',  name:'Dijon mustard'},
+      {amount:'25 g',  name:'Honey'},
+      {amount:'12 g',  name:'Shallot, minced fine'},
+      {amount:'0.5 g', name:'Xanthan gum (optional — for service stability)'},
+      {amount:'',      name:'Salt and white pepper, to taste'}
+    ],
+    steps:[
+      'Combine minced shallot with a small amount of the champagne vinegar in a small pan. Sweat over low heat 2–3 minutes until softened — removes the raw edge without losing flavor. Cool completely.',
+      'Add all the champagne vinegar, Dijon, honey, and cooled shallot to a blender or bowl. If using xanthan gum, add it now and let it hydrate 2 minutes before proceeding.',
+      'Blending method: with blender running on low, stream the grapeseed oil in slowly and steadily. Increase speed slightly once half the oil is incorporated. Whisking method: whisk vinegar mixture vigorously while streaming oil in a thin, steady drizzle.',
+      'Season assertively with salt and white pepper. Vinaigrette requires more salt than you expect — season until acid and oil are in balance.',
+      'Rest 30 minutes before service. The emulsion tightens and flavors marry. Taste again and adjust before plating.',
+      'Service: dress to order. Shake or whisk briefly before each use in a squeeze bottle. Xanthan version holds through a full service without breaking; non-xanthan version should be re-emulsified between passes. Shelf life 5–7 days refrigerated.'
+    ]
+  },
+
+  { id:'r62', name:'Beck Herb Oil', category:'Sauces', yield:'~300–330g finished oil',
+    ingredients:[
+      {amount:'40 g', name:'Flat-leaf parsley'},
+      {amount:'30 g', name:'Basil'},
+      {amount:'20 g', name:'Chervil'},
+      {amount:'15 g', name:'Chives'},
+      {amount:'15 g', name:'Tarragon'},
+      {amount:'10 g', name:'Spinach (optional — for color stability)'},
+      {amount:'240 g',name:'Grapeseed oil'}
+    ],
+    steps:[
+      'Bring a large pot of well-salted water to a rolling boil. Prepare an ice bath.',
+      'Blanch all herbs together for exactly 10 seconds. Shock immediately in ice water — do not let them sit.',
+      'Squeeze herbs completely dry. This step is critical — any residual water will prevent proper emulsification and dull the color.',
+      'Combine dry herbs and grapeseed oil in a VitaPrep. Blend on high for 1–2 minutes until the mixture heats from friction and turns very bright green.',
+      'Strain immediately through a Superbag or chinois lined with a coffee filter. Do not press or squeeze — let it drip freely for 30–60 minutes. Pressing will cloud the oil.',
+      'Transfer to a squeeze bottle. Oil should be vivid green, clear, and clean-tasting. Refrigerate — use within 3–4 days for best color.'
+    ]
+  },
+
+  { id:'r63', name:'Spaetzle', category:'Breads & Doughs', yield:'~4–6 portions',
+    ingredients:[
+      {amount:'4',       name:'Egg yolks'},
+      {amount:'1',       name:'Whole egg'},
+      {amount:'1.75 c',  name:'Whole milk'},
+      {amount:'1 lb',    name:'All-purpose flour, sifted'},
+      {amount:'0.5 tsp', name:'Caraway seed, toasted and ground'},
+      {amount:'2 oz',    name:'Unsalted butter, melted'}
+    ],
+    steps:[
+      'Toast caraway seeds in a dry pan over medium heat until fragrant, about 2 minutes. Grind fine in a spice grinder. Set aside.',
+      'Whisk together egg yolks, whole egg, and milk until combined.',
+      'Sift flour into a separate bowl. Stir in ground caraway.',
+      'Add the flour mixture to the wet ingredients in alternating additions with the melted butter, stirring between each addition. Batter should be thick, smooth, and fall in a slow ribbon — not pourable like crepe batter, not stiff like pasta dough.',
+      'Bring a large pot of well-salted water to a boil. Working in batches, press batter through a spaetzle maker or large-holed colander directly into the boiling water. Cook until spaetzle float and are tender, about 2–3 minutes.',
+      'Remove with a spider or slotted spoon. Spread on an oiled sheet pan to cool if finishing later. To finish: sauté in brown butter over high heat until golden and lightly crisped at the edges.'
+    ]
+  },
   { id:'h1', name:'Agar — Fluid Gel', category:'Hydrocolloid Reference', yield:'See ratios below', ingredients:[{amount:'0.5%',name:'Agar (5g per 1000g) — soft, pourable, loose. Good for sauces & fluid applications'},{amount:'1.0%',name:'Agar (10g per 1000g) — sweet spot. Sets firm, blends smooth and glossy'},{amount:'1.5%',name:'Agar (15g per 1000g) — stiffer set, very stable. Good for piping or structured applications'},{amount:'1.5–2.0%',name:'Agar (15–20g per 1000g) — heat stable. Holds on a hot plate through service, won\'t melt until ~185°F'}], steps:['Hydrate agar in cold liquid. Bring to a full boil — must hit 185°F+ to activate properly.','Season and finish as needed.','Pour into shallow pan. Let set completely — do not rush.','Blend in VitaPrep on high until completely smooth and fluid.','Pass through fine tamis if needed.','Heat-stable notes: at 1.5–2.0%, gel resists melting on a hot plate (holds to ~185°F vs gelatin which melts at ~95°F). Higher solids content and tight blending improve stability further. Avoid high-fat bases as fat can interfere with gel structure.'] },
   { id:'h2', name:'Xanthan Gum — Sauce Body', category:'Hydrocolloid Reference', yield:'See ratios below', ingredients:[{amount:'0.1%',name:'Xanthan (1g per 1000g) — very light. Barely noticeable viscosity, just a touch of body'},{amount:'0.2–0.3%',name:'Xanthan (2–3g per 1000g) — sweet spot. Adds body, prevents syneresis, still pours cleanly'},{amount:'0.5%+',name:'Xanthan (5g+ per 1000g) — thick, gel-like. Starts to feel gluey if pushed further'}], steps:['Always shear in — whisk vigorously or use VitaPrep on high. Will not hydrate properly by hand stirring alone.','Can be added to cold or warm liquid. Hydrates faster in warm.','Xanthan is shear-thinning: flows more easily under pressure (pouring, squeeze bottle) and thickens back at rest — ideal for plating.','A little goes a long way. Always easier to add more than to fix an over-xanthaned sauce.','See Rhubarb Ketchup in this app for a real-world example of xanthan use.'] },
   { id:'h3', name:'Gelatin — Ratios & Usage', category:'Hydrocolloid Reference', yield:'See ratios below', ingredients:[{amount:'1.5–2%',name:'Gelatin (15–20g per 1000g) — firm set. Panna cotta, terrines, molded gels'},{amount:'0.5–1%',name:'Gelatin (5–10g per 1000g) — soft set. Glazes, lightly gelled sauces, velouté body'},{amount:'1 sheet silver',name:'Silver gelatin ≈ 2.5g. Blooms in cold water 5–10 min before use'},{amount:'Note',name:'Melts at ~95°F — not heat stable. Do not use on hot plates.'}], steps:['Bloom gelatin sheets in cold water 5–10 minutes until soft.','Wring out excess water. Melt into warm (not boiling) liquid — above 140°F destroys setting power.','For precise work, weigh gelatin rather than counting sheets (silver sheet = ~2.5g).','Set in refrigerator. Allow full chill before unmolding — minimum 2 hours, overnight preferred.','Not heat stable — will melt above ~95°F. Use agar fluid gel for hot plate applications.'] },
