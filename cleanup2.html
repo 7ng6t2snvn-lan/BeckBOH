@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Beck Kitchen — Write New Recipes</title>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f8f5f0; color: #1a1814; }
+h2 { font-size: 22px; margin-bottom: 8px; }
+p { color: #5a5448; margin-bottom: 16px; font-size: 14px; }
+button { background: #9a7040; color: #fff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 15px; cursor: pointer; display: block; width: 100%; margin-bottom: 10px; }
+#log { background: #fff; border: 1px solid #e0d8cc; border-radius: 10px; padding: 16px; font-size: 12px; font-family: monospace; min-height: 160px; white-space: pre-wrap; margin-top: 20px; max-height: 500px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<h2>Beck Kitchen — Write New Recipes</h2>
+<p>Step 1: Sign in. Step 2: Write recipes. Watch the log for any errors.</p>
+<button onclick="doSignIn()">1. Sign In with Google</button>
+<button onclick="doWrite()" id="btn-write" disabled>2. Write r60–r63 to Firestore</button>
+<div id="log">Waiting...</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
+  authDomain: "beck-kitchen-reference.firebaseapp.com",
+  projectId: "beck-kitchen-reference",
+  storageBucket: "beck-kitchen-reference.firebasestorage.app",
+  messagingSenderId: "1076150647462",
+  appId: "1:1076150647462:web:97974b77af810b35225267"
+});
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const log = document.getElementById('log');
+function L(msg) { log.textContent += msg + '\n'; log.scrollTop = 99999; }
+
+const RECIPES = [
+  { id:'r60', name:'Brown Butter Beurre Blanc', category:'Sauces', yield:'~2.6L — 70 × 1.1oz portions',
+    ingredients:[
+      {amount:'1.6 kg', name:'Unsalted butter (to brown)'},
+      {amount:'400 g',  name:'Dry white wine'},
+      {amount:'200 g',  name:'Champagne vinegar'},
+      {amount:'220 g',  name:'Shallots, very fine brunoise'},
+      {amount:'160 g',  name:'Heavy cream (stabilizer)'},
+      {amount:'16 g',   name:'Kosher salt'},
+      {amount:'5 g',    name:'White pepper'},
+      {amount:'30 g',   name:'Pernod or Pastis (optional but recommended)'},
+      {amount:'40 g',   name:'Lemon juice, to finish'}
+    ],
+    steps:[
+      'Brown the butter in batches in a wide rondeau over medium heat, stirring constantly. Cook until deep golden and nutty — solids amber, not black. Strain immediately through a fine chinois. Reserve warm.',
+      'Combine wine, champagne vinegar, and shallots. Reduce until nearly dry — 2–3 tbsp remaining. Shallots completely soft, pan almost au sec.',
+      'Add heavy cream to reduction. Bring to a simmer, reduce by half. This is your stabilizing base.',
+      'Over low heat, mount brown butter into cream-reduction base via immersion blender or vigorous whisking in a slow steady stream. Sauce will emulsify to nappé.',
+      'Add Pernod or Pastis if using. Finish with lemon juice. Adjust salt and white pepper.',
+      'Hold in bain marie at 130–140°F. Do not boil. Stir gently before each pull. Loosen with warm cream or wine if it tightens.'
+    ]
+  },
+  { id:'r61', name:'House Champagne Vinaigrette', category:'Sauces', yield:'1 Liter',
+    ingredients:[
+      {amount:'750 g', name:'Grapeseed oil'},
+      {amount:'250 g', name:'Champagne vinegar'},
+      {amount:'38 g',  name:'Dijon mustard'},
+      {amount:'25 g',  name:'Honey'},
+      {amount:'12 g',  name:'Shallot, minced fine'},
+      {amount:'0.5 g', name:'Xanthan gum (optional — for service stability)'},
+      {amount:'',      name:'Salt and white pepper, to taste'}
+    ],
+    steps:[
+      'Combine minced shallot with a small amount of champagne vinegar in a small pan. Sweat over low heat 2–3 minutes until softened. Cool completely.',
+      'Add all champagne vinegar, Dijon, honey, and cooled shallot to a blender or bowl. If using xanthan gum, add now and hydrate 2 minutes before proceeding.',
+      'Blending method: with blender on low, stream grapeseed oil in slowly. Increase speed once half the oil is in. Whisking method: whisk vigorously while streaming oil in a thin steady drizzle.',
+      'Season assertively with salt and white pepper — needs more salt than you expect. Season until acid and oil are in balance.',
+      'Rest 30 minutes before service. Emulsion tightens and flavors marry. Taste again before plating.',
+      'Dress to order. Shake or whisk briefly before each use. Xanthan version holds through full service; non-xanthan re-emulsify between passes. Shelf life 5–7 days refrigerated.'
+    ]
+  },
+  { id:'r62', name:'Beck Herb Oil', category:'Sauces', yield:'~300–330g finished oil',
+    ingredients:[
+      {amount:'40 g', name:'Flat-leaf parsley'},
+      {amount:'30 g', name:'Basil'},
+      {amount:'20 g', name:'Chervil'},
+      {amount:'15 g', name:'Chives'},
+      {amount:'15 g', name:'Tarragon'},
+      {amount:'10 g', name:'Spinach (optional — for color stability)'},
+      {amount:'240 g',name:'Grapeseed oil'}
+    ],
+    steps:[
+      'Bring a large pot of well-salted water to a rolling boil. Prepare an ice bath.',
+      'Blanch all herbs together for exactly 10 seconds. Shock immediately in ice water.',
+      'Squeeze herbs completely dry — any residual water will prevent emulsification and dull the color.',
+      'Combine dry herbs and grapeseed oil in VitaPrep. Blend on high 1–2 minutes until mixture heats from friction and turns vivid green.',
+      'Strain immediately through a Superbag or chinois lined with a coffee filter. Do not press — let drip freely 30–60 minutes. Pressing will cloud the oil.',
+      'Transfer to squeeze bottle. Should be vivid green, clear, and clean-tasting. Refrigerate — use within 3–4 days for best color.'
+    ]
+  },
+  { id:'r63', name:'Spaetzle', category:'Breads & Doughs', yield:'~4–6 portions',
+    ingredients:[
+      {amount:'4',       name:'Egg yolks'},
+      {amount:'1',       name:'Whole egg'},
+      {amount:'1.75 c',  name:'Whole milk'},
+      {amount:'1 lb',    name:'All-purpose flour, sifted'},
+      {amount:'0.5 tsp', name:'Caraway seed, toasted and ground'},
+      {amount:'2 oz',    name:'Unsalted butter, melted'}
+    ],
+    steps:[
+      'Toast caraway seeds in a dry pan over medium heat until fragrant, about 2 minutes. Grind fine in a spice grinder.',
+      'Whisk together egg yolks, whole egg, and milk until combined.',
+      'Sift flour into a separate bowl. Stir in ground caraway.',
+      'Add flour mixture to wet ingredients in alternating additions with melted butter, stirring between each. Batter should be thick, smooth, fall in a slow ribbon.',
+      'Bring a large pot of well-salted water to a boil. Press batter through a spaetzle maker or large-holed colander into water. Cook until float and tender, about 2–3 minutes.',
+      'Remove with a spider. Spread on oiled sheet pan to cool if finishing later. To finish: sauté in brown butter over high heat until golden and lightly crisped.'
+    ]
+  }
+];
+
+window.doSignIn = async function() {
+  L('Opening Google sign-in popup...');
+  try {
+    const result = await signInWithPopup(auth, new GoogleAuthProvider());
+    L('✓ Signed in as: ' + result.user.email);
+    L('UID: ' + result.user.uid);
+    document.getElementById('btn-write').disabled = false;
+    L('\nReady — click "Write r60–r63 to Firestore"');
+  } catch(e) {
+    L('✗ Sign-in error: ' + e.code + ' — ' + e.message);
+  }
+};
+
+window.doWrite = async function() {
+  const user = auth.currentUser;
+  if (!user) { L('Not signed in!'); return; }
+  L('\nCurrent user: ' + user.email + ' (uid: ' + user.uid + ')');
+  L('Starting writes...\n');
+
+  for (const recipe of RECIPES) {
+    L('Writing ' + recipe.name + ' (id: ' + recipe.id + ')...');
+    try {
+      await setDoc(doc(db, 'recipes', recipe.id), recipe);
+      L('  ✓ Written successfully');
+      // Immediately verify it's readable
+      const check = await getDoc(doc(db, 'recipes', recipe.id));
+      if (check.exists()) {
+        L('  ✓ Verified readable: ' + check.data().name);
+      } else {
+        L('  ✗ Write appeared to succeed but doc not found on read-back!');
+      }
+    } catch(e) {
+      L('  ✗ WRITE FAILED: ' + e.code + ' — ' + e.message);
+    }
+  }
+  L('\nDone. Refresh the Beck Kitchen app and check Recipes > Sauces and Breads & Doughs.');
+};
+</script>
+</body>
+</html>
