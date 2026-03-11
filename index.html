@@ -23,48 +23,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; min-height: 100dvh; overflow-x: hidden; }
 
-
-/* HYDRO TAB */
-#hydro-view { display: none; flex-direction: column; overflow-y: auto; padding-bottom: 80px; }
-#hydro-view.active { display: flex; }
-.hydro-section-title { font-family: var(--serif); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); padding: 16px 16px 8px; border-bottom: 1px solid var(--border); }
-.hydro-ref-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin: 10px 16px 0; overflow: hidden; }
-.hydro-ref-header { padding: 13px 15px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-.hydro-ref-name { font-family: var(--serif); font-size: 18px; font-weight: 400; }
-.hydro-ref-arrow { color: var(--text-muted); font-size: 13px; transition: transform 0.2s; }
-.hydro-ref-arrow.open { transform: rotate(90deg); }
-.hydro-ref-body { display: none; border-top: 1px solid var(--border); padding: 12px 15px 15px; }
-.hydro-ref-body.open { display: block; }
-.hydro-ratio-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-.hydro-ratio-row:last-child { border-bottom: none; }
-.hydro-ratio-pct { color: var(--accent); font-family: var(--serif); font-size: 14px; min-width: 70px; flex-shrink: 0; }
-.hydro-ratio-desc { color: var(--text-dim); line-height: 1.4; }
-.hydro-steps { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
-.hydro-step { display: flex; gap: 10px; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
-.hydro-step-num { color: var(--accent); font-family: var(--serif); flex-shrink: 0; width: 16px; }
-
-/* CALCULATOR */
-.hydro-calc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin: 14px 16px 0; padding: 16px; }
-.hydro-calc-title { font-family: var(--serif); font-size: 20px; font-weight: 300; margin-bottom: 14px; }
-.hydro-calc-field { margin-bottom: 14px; }
-.hydro-calc-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: block; }
-.hydro-calc-select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; color: var(--text); font-family: var(--sans); font-size: 14px; padding: 10px 14px; outline: none; appearance: none; }
-.hydro-calc-select:focus { border-color: var(--accent-dim); }
-.hydro-texture-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.hydro-texture-btn { padding: 10px 8px; border-radius: 10px; border: 1px solid var(--border2); background: var(--surface2); color: var(--text-dim); font-family: var(--sans); font-size: 12px; text-align: center; cursor: pointer; line-height: 1.3; transition: all 0.15s; }
-.hydro-texture-btn.selected { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
-.hydro-weight-row { display: flex; gap: 10px; align-items: flex-end; }
-.hydro-weight-input { flex: 1; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; color: var(--text); font-family: var(--sans); font-size: 22px; padding: 10px 14px; outline: none; }
-.hydro-weight-input:focus { border-color: var(--accent-dim); }
-.hydro-unit-toggle { display: flex; border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; flex-shrink: 0; }
-.hydro-unit-btn { padding: 10px 14px; background: var(--surface2); border: none; color: var(--text-dim); font-family: var(--sans); font-size: 13px; cursor: pointer; }
-.hydro-unit-btn.active { background: var(--accent); color: #fff; }
-.hydro-result { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 14px; display: none; }
-.hydro-result.show { display: block; }
-.hydro-result-main { font-family: var(--serif); font-size: 32px; font-weight: 300; color: var(--accent); margin-bottom: 4px; }
-.hydro-result-label { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
-.hydro-result-tip { font-size: 13px; color: var(--text-dim); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; }
-
 /* PIN */
 #pin-screen { position: fixed; inset: 0; z-index: 1000; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
 .pin-logo { width: 180px; margin-bottom: 36px; filter: invert(1) brightness(0.75) sepia(0.3); }
@@ -348,7 +306,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
       <div class="nav-tab" id="tab-prep" onclick="switchTab('prep')">Prep List</div>
       <div class="nav-tab" id="tab-chat" onclick="switchTab('chat')">Chat <span class="chat-badge" id="chat-unread-badge" style="display:none;"></span></div>
       <div class="nav-tab" id="tab-needs" onclick="switchTab('needs')">Needs <span class="chat-badge" id="needs-unread-badge" style="display:none;"></span></div>
-      <div class="nav-tab" id="tab-hydro" onclick="switchTab('hydro')">Hydro</div>
     </div>
     <div class="search-bar" id="recipe-search-bar">
       <div class="search-wrap">
@@ -1236,19 +1193,16 @@ window.switchTab = function(tab) {
   const isPrep = tab === 'prep';
   const isRecipes = tab === 'recipes';
   const isNeeds = tab === 'needs';
-  const isHydro = tab === 'hydro';
   document.getElementById('tab-recipes').classList.toggle('active', isRecipes);
   document.getElementById('tab-prep').classList.toggle('active', isPrep);
   document.getElementById('tab-chat').classList.toggle('active', isChat);
   document.getElementById('tab-needs').classList.toggle('active', isNeeds);
-  document.getElementById('tab-hydro').classList.toggle('active', isHydro);
   document.getElementById('recipe-search-bar').style.display = isRecipes ? '' : 'none';
   document.getElementById('cat-pills').style.display = isRecipes ? '' : 'none';
   document.getElementById('recipe-list').style.display = isRecipes ? '' : 'none';
   document.getElementById('prep-view').classList.toggle('active', isPrep);
   document.getElementById('chat-view').classList.toggle('active', isChat);
   document.getElementById('needs-view').classList.toggle('active', isNeeds);
-  document.getElementById('hydro-view').classList.toggle('active', isHydro);
 
   if (isChat) {
     chatUnreadCount = 0;
@@ -1650,156 +1604,6 @@ window.deleteNeedsItem = async function(id) {
   } catch(e) {
     alert('Error deleting. Check your connection.');
   }
-};
-
-// ── HYDROCOLLOID REFERENCE CARDS ─────────────────────
-window.toggleHydroCard = function(id) {
-  const body = document.getElementById('hydro-body-' + id);
-  const arrow = document.getElementById('hydro-arrow-' + id);
-  body.classList.toggle('open');
-  arrow.classList.toggle('open');
-};
-
-// ── HYDROCOLLOID CALCULATOR ───────────────────────────
-const HC_DATA = {
-  agar: {
-    textures: [
-      { label: 'Fluid Sauce', desc: 'Pourable, loose', pct: 0.5, tip: 'Hydrate in cold liquid, bring to a full boil, set, then blend smooth in VitaPrep.' },
-      { label: 'Fluid Gel', desc: 'Glossy, spoonable', pct: 1.0, tip: 'Sweet spot for fluid gels. Sets firm, blends to silky and glossy. Pass through tamis for refinement.' },
-      { label: 'Structured Gel', desc: 'Pipeable, holds shape', pct: 1.5, tip: 'Stiffer set — holds clean shapes when piped or molded. Still blends smooth.' },
-      { label: 'Hot-Plate Stable', desc: "Won't melt on service", pct: 1.75, tip: 'Heat stable to ~185°F. Use for plated sauces that must hold through service on a warm plate.' },
-    ]
-  },
-  xanthan: {
-    textures: [
-      { label: 'Light Body', desc: 'Just a touch of viscosity', pct: 0.1, tip: 'Barely noticeable — adds slip and prevents separation without changing perceived thickness.' },
-      { label: 'Sauce Body', desc: 'Clean pour, no syneresis', pct: 0.25, tip: 'Sweet spot for most sauces. Shear-thinning: pours easily, thickens back at rest on the plate.' },
-      { label: 'Thick Sauce', desc: 'Coating consistency', pct: 0.4, tip: 'Noticeably thick. Good for squeeze-bottle applications that need to hold their shape briefly.' },
-      { label: 'Heavy / Gel-Like', desc: 'Very thick, almost gel', pct: 0.5, tip: 'Approaches gluey territory. Use sparingly — easier to add more than to fix over-xanthaned sauce.' },
-    ]
-  },
-  gelatin: {
-    textures: [
-      { label: 'Glaze / Nappé', desc: 'Lightly coats, barely sets', pct: 0.6, tip: 'Use for mirror glazes, aspic coatings, or velouté body. Blooms in cold water 5–10 min before use.' },
-      { label: 'Soft Set', desc: 'Trembles, barely holds', pct: 1.0, tip: 'Delicate panna cotta texture. Sets with a gentle wobble. Unmold carefully — minimum 4 hours chill.' },
-      { label: 'Firm Set', desc: 'Clean slice, holds shape', pct: 1.75, tip: 'Terrines, molded gels, sliceable preparations. Allow overnight chill for cleanest results.' },
-      { label: 'Bouncy / Firm', desc: 'Gummy, very structured', pct: 2.5, tip: 'Structured gels that hold at room temp briefly. Not heat stable — melts above ~95°F.' },
-    ]
-  },
-  methocel: {
-    textures: [
-      { label: 'Standard Hot Gel', desc: 'Sets when heated', pct: 1.5, tip: 'Reverse-sets: liquid when cold, solid when hot. Must hydrate in cold liquid below 50°F before use.' },
-      { label: 'Firm Hot Gel', desc: 'Strong structure when hot', pct: 2.0, tip: 'More structured — good for fried gels or hot gel noodles. Disperse in ice water using high shear.' },
-    ]
-  },
-  ultratex: {
-    textures: [
-      { label: 'Light Thickening', desc: 'Loose, flowing', pct: 1.0, tip: 'Shear in with VitaPrep — do not hand whisk. Thickens instantly without heat.' },
-      { label: 'Purée / Sauce', desc: 'Spoonable, holds shape', pct: 2.0, tip: 'Ideal for purées that need to hold on the plate. Very stable — no weeping under refrigeration.' },
-      { label: 'Heavy Purée', desc: 'Thick, pipeable', pct: 3.0, tip: 'Thick enough to pipe or quenelle. Adjust in small increments — Ultra-Tex is very responsive.' },
-    ]
-  },
-  iota: {
-    textures: [
-      { label: 'Elastic Soft Gel', desc: 'Wobbles, self-heals', pct: 0.5, tip: 'Works best with dairy or calcium-rich liquids. Soft, elastic texture — scoops and reforms.' },
-      { label: 'Firm Elastic Gel', desc: 'Sliceable but springy', pct: 1.0, tip: 'Good for dairy-based gels that need to hold shape but retain some elasticity.' },
-    ]
-  },
-  kappa: {
-    textures: [
-      { label: 'Brittle Soft Gel', desc: 'Sets firm, snaps cleanly', pct: 0.3, tip: 'Works best with potassium-rich liquids. Brittle texture — breaks cleanly rather than stretching.' },
-      { label: 'Firm Brittle Gel', desc: 'Very firm, clean cut', pct: 0.6, tip: 'Good for gels that need to be diced or cut precisely. Not heat stable above ~140°F.' },
-    ]
-  },
-  lecithin: {
-    textures: [
-      { label: 'Light Foam', desc: 'Airy, dissipates quickly', pct: 0.3, tip: 'Use an immersion blender at the surface to incorporate air. Best with thin, watery liquids.' },
-      { label: 'Stable Foam', desc: 'Holds several minutes', pct: 0.5, tip: 'Sweet spot for service foams. Blend vigorously, skim from surface. Use immediately.' },
-      { label: 'Dense Foam', desc: 'Tight bubbles, holds longer', pct: 0.8, tip: 'Denser, longer-lasting foam. Works well with slightly richer liquids. Avoid dairy for best result.' },
-    ]
-  },
-  tara: {
-    textures: [
-      { label: 'Light Stabilizer', desc: 'Prevents separation', pct: 0.1, tip: 'Used in small amounts to stabilize emulsions and prevent syneresis. Works in cold applications.' },
-      { label: 'Medium Body', desc: 'Smooth, clean viscosity', pct: 0.2, tip: 'Clean flavor — no aftertaste. Good for gelato and ice cream as a primary stabilizer.' },
-      { label: 'Gelato Stabilizer', desc: 'Creamy, scoopable texture', pct: 0.3, tip: 'At higher levels used as the sole stabilizer in gelato. Prevents ice crystal growth.' },
-    ]
-  },
-  locust: {
-    textures: [
-      { label: 'Stabilizer', desc: 'Emulsion support', pct: 0.15, tip: 'Often used in combination with other hydrocolloids. Excellent synergy with xanthan and carrageenan.' },
-      { label: 'Ice Cream Body', desc: 'Creamy, smooth melt', pct: 0.25, tip: 'Excellent for frozen applications — improves body and melt resistance in ice cream and gelato.' },
-    ]
-  },
-};
-
-let hcSelectedTexture = null;
-let hcUnit = 'g';
-
-window.hcUpdateTextures = function() {
-  const sel = document.getElementById('hc-select').value;
-  hcSelectedTexture = null;
-  document.getElementById('hc-result').classList.remove('show');
-
-  if (!sel) {
-    document.getElementById('hc-texture-field').style.display = 'none';
-    document.getElementById('hc-weight-field').style.display = 'none';
-    return;
-  }
-
-  const data = HC_DATA[sel];
-  const grid = document.getElementById('hc-texture-grid');
-  grid.innerHTML = data.textures.map((t, i) =>
-    `<button class="hydro-texture-btn" id="hc-tex-${i}" onclick="hcSelectTexture(${i})">${t.label}<br><span style="font-size:10px;opacity:0.7;">${t.desc}</span></button>`
-  ).join('');
-
-  document.getElementById('hc-texture-field').style.display = '';
-  document.getElementById('hc-weight-field').style.display = '';
-};
-
-window.hcSelectTexture = function(i) {
-  document.querySelectorAll('.hydro-texture-btn').forEach((b, idx) => b.classList.toggle('selected', idx === i));
-  hcSelectedTexture = i;
-  hcCalculate();
-};
-
-window.hcSetUnit = function(unit) {
-  hcUnit = unit;
-  ['g','kg','lb'].forEach(u => document.getElementById('hc-unit-' + u).classList.toggle('active', u === unit));
-  hcCalculate();
-};
-
-window.hcCalculate = function() {
-  const sel = document.getElementById('hc-select').value;
-  const weightRaw = parseFloat(document.getElementById('hc-weight').value);
-  if (!sel || hcSelectedTexture === null || !weightRaw || weightRaw <= 0) {
-    document.getElementById('hc-result').classList.remove('show');
-    return;
-  }
-
-  // Convert to grams
-  let weightG = weightRaw;
-  if (hcUnit === 'kg') weightG = weightRaw * 1000;
-  if (hcUnit === 'lb') weightG = weightRaw * 453.592;
-
-  const texture = HC_DATA[sel].textures[hcSelectedTexture];
-  const pct = texture.pct / 100;
-  const grams = weightG * pct;
-
-  let resultText, labelText;
-  if (sel === 'gelatin') {
-    const sheets = grams / 2.5;
-    resultText = grams.toFixed(1) + 'g';
-    labelText = `≈ ${sheets.toFixed(1)} silver gelatin sheets · ${texture.pct}% of ${weightG.toFixed(0)}g batch`;
-  } else {
-    resultText = grams.toFixed(1) + 'g';
-    labelText = `${texture.pct}% of ${weightG.toFixed(0)}g batch`;
-  }
-
-  document.getElementById('hc-result-main').textContent = resultText;
-  document.getElementById('hc-result-label').textContent = labelText;
-  document.getElementById('hc-result-tip').textContent = texture.tip;
-  document.getElementById('hc-result').classList.add('show');
 };
 
 </script>
