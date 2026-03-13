@@ -304,19 +304,19 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
     <div class="pin-dot"></div><div class="pin-dot"></div>
   </div>
   <div class="pin-error" id="pin-error"></div>
-  <div class="pin-keypad">
-    <button class="pin-key" onclick="pinKey('1')">1</button>
-    <button class="pin-key" onclick="pinKey('2')">2</button>
-    <button class="pin-key" onclick="pinKey('3')">3</button>
-    <button class="pin-key" onclick="pinKey('4')">4</button>
-    <button class="pin-key" onclick="pinKey('5')">5</button>
-    <button class="pin-key" onclick="pinKey('6')">6</button>
-    <button class="pin-key" onclick="pinKey('7')">7</button>
-    <button class="pin-key" onclick="pinKey('8')">8</button>
-    <button class="pin-key" onclick="pinKey('9')">9</button>
+  <div class="pin-keypad" id="pin-keypad">
+    <button class="pin-key" data-pin="1">1</button>
+    <button class="pin-key" data-pin="2">2</button>
+    <button class="pin-key" data-pin="3">3</button>
+    <button class="pin-key" data-pin="4">4</button>
+    <button class="pin-key" data-pin="5">5</button>
+    <button class="pin-key" data-pin="6">6</button>
+    <button class="pin-key" data-pin="7">7</button>
+    <button class="pin-key" data-pin="8">8</button>
+    <button class="pin-key" data-pin="9">9</button>
     <button class="pin-key empty"></button>
-    <button class="pin-key" onclick="pinKey('0')">0</button>
-    <button class="pin-key del" onclick="pinDel()">⌫</button>
+    <button class="pin-key" data-pin="0">0</button>
+    <button class="pin-key del" data-pin="del">⌫</button>
   </div>
 </div>
 
@@ -1395,6 +1395,15 @@ window.pinDel = function() {
   updatePinDots();
   document.getElementById('pin-error').textContent = '';
 };
+// PIN keypad event delegation — works reliably on Android Chrome
+document.getElementById('pin-keypad').addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-pin]');
+  if (!btn) return;
+  const val = btn.getAttribute('data-pin');
+  if (val === 'del') { window.pinDel(); }
+  else { window.pinKey(val); }
+});
+
 function updatePinDots() {
   document.querySelectorAll('.pin-dot').forEach((d,i) => {
     d.classList.toggle('filled', i < pinEntry.length);
