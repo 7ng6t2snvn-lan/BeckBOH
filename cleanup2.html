@@ -16,12 +16,15 @@
 <body>
 <h2>Beck Kitchen — Push New Recipes to Firestore</h2>
 <p>This will add <strong>41 new recipes</strong> to the beck-kitchen-reference Firestore database.</p>
-<button id="pushBtn" onclick="pushRecipes()">PUSH ALL 41 RECIPES</button>
+<button id="signInBtn" onclick="signIn()">SIGN IN WITH GOOGLE</button>
+<div id="authStatus" style="margin: 10px 0;"></div>
+<button id="pushBtn" onclick="pushRecipes()" disabled>PUSH ALL 41 RECIPES</button>
 <div id="log"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
@@ -34,6 +37,27 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById('authStatus').innerHTML = `<span class="ok">✓ Signed in as ${user.email}</span>`;
+    document.getElementById('pushBtn').disabled = false;
+    document.getElementById('signInBtn').style.display = 'none';
+  } else {
+    document.getElementById('authStatus').innerHTML = `<span class="err">Not signed in — click Sign In first</span>`;
+    document.getElementById('pushBtn').disabled = true;
+  }
+});
+
+window.signIn = async function() {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    document.getElementById('log').innerHTML = `<span class="err">Sign in failed: ${e.message}</span>`;
+  }
+};
 
 const NEW_RECIPES = [
   {
