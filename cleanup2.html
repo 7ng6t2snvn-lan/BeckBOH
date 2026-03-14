@@ -2,358 +2,871 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Beck Kitchen — Write New Recipes</title>
+<title>Beck Kitchen — Firestore Recipe Pusher</title>
 <style>
-body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f8f5f0; color: #1a1814; }
-h2 { font-size: 22px; margin-bottom: 8px; }
-p { color: #5a5448; margin-bottom: 16px; font-size: 14px; }
-button { background: #9a7040; color: #fff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 15px; cursor: pointer; display: block; width: 100%; margin-bottom: 10px; }
-#log { background: #fff; border: 1px solid #e0d8cc; border-radius: 10px; padding: 16px; font-size: 12px; font-family: monospace; min-height: 160px; white-space: pre-wrap; margin-top: 20px; max-height: 500px; overflow-y: auto; }
+  body { font-family: monospace; background: #111; color: #0f0; padding: 20px; }
+  button { background: #0f0; color: #000; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px 0; border-radius: 4px; font-weight: bold; }
+  button:disabled { background: #555; color: #999; cursor: not-allowed; }
+  #log { margin-top: 20px; white-space: pre-wrap; font-size: 13px; line-height: 1.6; max-height: 600px; overflow-y: auto; }
+  .ok { color: #0f0; }
+  .err { color: #f44; }
+  .info { color: #ff0; }
 </style>
 </head>
 <body>
-<h2>Beck Kitchen — Write New Recipes</h2>
-<p>Step 1: Sign in. Step 2: Write recipes. Watch the log for any errors.</p>
-<button onclick="doSignIn()">1. Sign In with Google</button>
-<button onclick="doWrite()" id="btn-write" disabled>2. Write r60–r63 to Firestore</button>
-<div id="log">Waiting...</div>
+<h2>Beck Kitchen — Push New Recipes to Firestore</h2>
+<p>This will add <strong>41 new recipes</strong> to the beck-kitchen-reference Firestore database.</p>
+<button id="pushBtn" onclick="pushRecipes()">PUSH ALL 41 RECIPES</button>
+<div id="log"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const app = initializeApp({
+const firebaseConfig = {
   apiKey: "AIzaSyDtn_GIhclAhBWhYZoHCy5kpbgHnxpLq6I",
   authDomain: "beck-kitchen-reference.firebaseapp.com",
   projectId: "beck-kitchen-reference",
   storageBucket: "beck-kitchen-reference.firebasestorage.app",
   messagingSenderId: "1076150647462",
   appId: "1:1076150647462:web:97974b77af810b35225267"
-});
+};
+
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
-const log = document.getElementById('log');
-function L(msg) { log.textContent += msg + '\n'; log.scrollTop = 99999; }
-
-const RECIPES = [
-  { id:'r60', name:'Brown Butter Beurre Blanc', category:'Sauces', yield:'~2.6L — 70 × 1.1oz portions',
-    ingredients:[
-      {amount:'1.6 kg', name:'Unsalted butter (to brown)'},
-      {amount:'400 g',  name:'Dry white wine'},
-      {amount:'200 g',  name:'Champagne vinegar'},
-      {amount:'220 g',  name:'Shallots, very fine brunoise'},
-      {amount:'160 g',  name:'Heavy cream (stabilizer)'},
-      {amount:'16 g',   name:'Kosher salt'},
-      {amount:'5 g',    name:'White pepper'},
-      {amount:'30 g',   name:'Pernod or Pastis (optional but recommended)'},
-      {amount:'40 g',   name:'Lemon juice, to finish'}
+const NEW_RECIPES = [
+  {
+    id: 'r72', name: 'Pistachio Financier', category: 'Pastry & Desserts',
+    yield: '1 quarter sheet tray',
+    ingredients: [
+      {amount:'360g', name:'Sugar'}, {amount:'120g', name:'AP Flour'},
+      {amount:'180g', name:'Pistachios, roasted'}, {amount:'120g', name:'Pistachio Paste'},
+      {amount:'300g', name:'Egg Whites'}, {amount:'300g', name:'Butter, melted, hot'}
     ],
-    steps:[
-      'Brown the butter in batches in a wide rondeau over medium heat, stirring constantly. Cook until deep golden and nutty — solids amber, not black. Strain immediately through a fine chinois. Reserve warm.',
-      'Combine wine, champagne vinegar, and shallots. Reduce until nearly dry — 2–3 tbsp remaining. Shallots completely soft, pan almost au sec.',
-      'Add heavy cream to reduction. Bring to a simmer, reduce by half. This is your stabilizing base.',
-      'Over low heat, mount brown butter into cream-reduction base via immersion blender or vigorous whisking in a slow steady stream. Sauce will emulsify to nappé.',
-      'Add Pernod or Pastis if using. Finish with lemon juice. Adjust salt and white pepper.',
-      'Hold in bain marie at 130–140°F. Do not boil. Stir gently before each pull. Loosen with warm cream or wine if it tightens.'
+    steps: [
+      'Combine sugar and roasted pistachios in robot coupe. Process until fine texture.',
+      'Place into large mixing bowl. Form a well in the middle.',
+      'Pour egg whites into middle. Using a whisk, incorporate the dry ingredients into the egg whites. Stir until smooth.',
+      'Add pistachio paste to the sugar, egg white, and pistachio mixture.',
+      'Stir in melted butter in three additions.',
+      'Bake in paper and grease-lined quarter sheet tray at 175°C (350°F) for about 20 minutes, or until a tester comes out clean. Should be golden brown on top.'
     ]
   },
-  { id:'r61', name:'House Champagne Vinaigrette', category:'Sauces', yield:'1 Liter',
-    ingredients:[
-      {amount:'750 g', name:'Grapeseed oil'},
-      {amount:'250 g', name:'Champagne vinegar'},
-      {amount:'38 g',  name:'Dijon mustard'},
-      {amount:'25 g',  name:'Honey'},
-      {amount:'12 g',  name:'Shallot, minced fine'},
-      {amount:'0.5 g', name:'Xanthan gum (optional — for service stability)'},
-      {amount:'',      name:'Salt and white pepper, to taste'}
+  {
+    id: 'r73', name: 'Black Sesame Tuile', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'20g', name:'Sesame Seeds (mix black and white)'},
+      {amount:'60g', name:'Sugar'}, {amount:'32g', name:'AP Flour (sub ground barley flour)'},
+      {amount:'14g', name:'Unsalted Butter, melted'}, {amount:'5g', name:'Japanese Sesame Paste or Tahini, room temp'},
+      {amount:'30g', name:'Fresh Orange Juice'},
+      {amount:'as needed', name:'Black Sesame Seeds, for sprinkling'}
     ],
-    steps:[
-      'Combine minced shallot with a small amount of champagne vinegar in a small pan. Sweat over low heat 2–3 minutes until softened. Cool completely.',
-      'Add all champagne vinegar, Dijon, honey, and cooled shallot to a blender or bowl. If using xanthan gum, add now and hydrate 2 minutes before proceeding.',
-      'Blending method: with blender on low, stream grapeseed oil in slowly. Increase speed once half the oil is in. Whisking method: whisk vigorously while streaming oil in a thin steady drizzle.',
-      'Season assertively with salt and white pepper — needs more salt than you expect. Season until acid and oil are in balance.',
-      'Rest 30 minutes before service. Emulsion tightens and flavors marry. Taste again before plating.',
-      'Dress to order. Shake or whisk briefly before each use. Xanthan version holds through full service; non-xanthan re-emulsify between passes. Shelf life 5–7 days refrigerated.'
+    steps: [
+      'Combine all ingredients and mix until smooth.',
+      'Spread thinly onto a silpat or parchment-lined sheet tray.',
+      'Sprinkle black sesame seeds over the surface.',
+      'Bake at 175°C (350°F) until golden and crisp. Watch carefully — tuiles burn quickly.',
+      'While still warm, shape as desired. Cool completely before storing.'
     ]
   },
-  { id:'r62', name:'Beck Herb Oil', category:'Sauces', yield:'~300–330g finished oil',
-    ingredients:[
-      {amount:'40 g', name:'Flat-leaf parsley'},
-      {amount:'30 g', name:'Basil'},
-      {amount:'20 g', name:'Chervil'},
-      {amount:'15 g', name:'Chives'},
-      {amount:'15 g', name:'Tarragon'},
-      {amount:'10 g', name:'Spinach (optional — for color stability)'},
-      {amount:'240 g',name:'Grapeseed oil'}
+  {
+    id: 'r74', name: 'Zest Purée', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'200g', name:'Citrus Zest (lemon, orange, lime, or Meyer lemon — use peeler, no white pith)'},
+      {amount:'1L', name:'Simple Syrup'}
     ],
-    steps:[
-      'Bring a large pot of well-salted water to a rolling boil. Prepare an ice bath.',
-      'Blanch all herbs together for exactly 10 seconds. Shock immediately in ice water.',
-      'Squeeze herbs completely dry — any residual water will prevent emulsification and dull the color.',
-      'Combine dry herbs and grapeseed oil in VitaPrep. Blend on high 1–2 minutes until mixture heats from friction and turns vivid green.',
-      'Strain immediately through a Superbag or chinois lined with a coffee filter. Do not press — let drip freely 30–60 minutes. Pressing will cloud the oil.',
-      'Transfer to squeeze bottle. Should be vivid green, clear, and clean-tasting. Refrigerate — use within 3–4 days for best color.'
+    steps: [
+      'Blanch zest in salted water twice — start in cold water, bring to boil, drain. Repeat. This removes bitterness.',
+      'Add blanched zest to simple syrup and cook until tender.',
+      'Strain, reserving the simple syrup.',
+      'Purée zest in VitaPrep, adding reserved simple syrup as needed to reach desired consistency.',
+      'Pass through tamis or fine-mesh sieve. Season and adjust. Works for lemon, orange, lime, or Meyer lemon.'
     ]
   },
-  { id:'r63', name:'Spaetzle', category:'Breads & Doughs', yield:'~4–6 portions',
-    ingredients:[
-      {amount:'4',       name:'Egg yolks'},
-      {amount:'1',       name:'Whole egg'},
-      {amount:'1.75 c',  name:'Whole milk'},
-      {amount:'1 lb',    name:'All-purpose flour, sifted'},
-      {amount:'0.5 tsp', name:'Caraway seed, toasted and ground'},
-      {amount:'2 oz',    name:'Unsalted butter, melted'}
+  {
+    id: 'r75', name: 'Veggie Charcoal Soil', category: 'Garnishes & Accoutrements',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'100g', name:'Pistachios'}, {amount:'60g', name:'Rye Flour'},
+      {amount:'80g', name:'Vegetable Charcoal'}, {amount:'60g', name:'Butter, melted'},
+      {amount:'25g', name:'Sugar'}, {amount:'4g', name:'Salt'},
+      {amount:'120g', name:'IPA Beer'}
     ],
-    steps:[
-      'Toast caraway seeds in a dry pan over medium heat until fragrant, about 2 minutes. Grind fine in a spice grinder.',
-      'Whisk together egg yolks, whole egg, and milk until combined.',
-      'Sift flour into a separate bowl. Stir in ground caraway.',
-      'Add flour mixture to wet ingredients in alternating additions with melted butter, stirring between each. Batter should be thick, smooth, fall in a slow ribbon.',
-      'Bring a large pot of well-salted water to a boil. Press batter through a spaetzle maker or large-holed colander into water. Cook until float and tender, about 2–3 minutes.',
-      'Remove with a spider. Spread on oiled sheet pan to cool if finishing later. To finish: sauté in brown butter over high heat until golden and lightly crisped.'
+    steps: [
+      'Combine all dry ingredients: pistachios, rye flour, vegetable charcoal, sugar, and salt.',
+      'Add melted butter and IPA. Mix until a crumbly soil texture forms.',
+      'Spread on a parchment-lined sheet tray.',
+      'Bake at 160°C (325°F) until dry and crisp, stirring occasionally.',
+      'Cool completely. Break into soil-like crumbles. Store airtight away from moisture.',
+      'Note: Could use a more full-flavored beer — try molasses or porter for deeper color and flavor.'
     ]
   },
-  { id:'r64', name:'Candied Nuts', category:'Components', yield:'~300g',
-    ingredients:[
-      {amount:'300g',   name:'Nuts (pistachios, walnuts, pecans, etc.)'},
-      {amount:'1',      name:'Egg white (~30g), room temperature'},
-      {amount:'40g',    name:'Sugar'},
-      {amount:'3g',     name:'Fine salt'},
-      {amount:'2–2.5g', name:'Chile — Aleppo (fruity, mild) / Espelette (sweet heat) / Cayenne (hot, use less)'}
+  {
+    id: 'r76', name: 'Brioche', category: 'Breads & Doughs',
+    yield: 'Two 8-inch rings',
+    ingredients: [
+      {amount:'700g', name:'AP Flour'}, {amount:'21.6g', name:'Active Dry Yeast'},
+      {amount:'84g', name:'Sugar'}, {amount:'352g', name:'Eggs'},
+      {amount:'116g', name:'Whole Milk'}, {amount:'316g', name:'Unsalted Butter, cut into 1.5cm cubes'}
     ],
-    steps:[
-      'Preheat oven to 300°F / 150°C. Line a sheet pan with parchment.',
-      'Whisk egg white by hand until frothy and loose — bubbles present, slightly airy, nowhere near stiff peaks. Still fluid. This is the glue, not a meringue.',
-      'Add sugar, salt, and chile to frothed white. Fold to combine.',
-      'Add nuts and toss until every nut has a thin, even film. No pooling at the bottom.',
-      'Spread in a single layer. No overlapping — crowded nuts steam and clump.',
-      'Bake 20–25 minutes, stirring once halfway for even coating and color.',
-      'Pull when dry, set, and just golden. Still slightly soft when warm — normal. Do not overbake.',
-      'Cool completely before breaking apart. If tacky when warm, return to oven 3–5 minutes.',
-      'Current application — Candied Pistachios for Simple Green Salad: use Aleppo at 2.5g. Rough chop after cooling. Storage: airtight at room temp, 5–7 days. Do not refrigerate.'
+    steps: [
+      'Warm milk to 43°C, add yeast. Let bloom.',
+      'Add all remaining ingredients except butter to mixer with paddle. Mix on low 4–5 minutes.',
+      'Mix on low for 10 more minutes.',
+      'Ferment for 1 hour.',
+      'Stretch and fold dough on floured surface.',
+      'Cover and rest for 1 hour.',
+      'Repeat stretch and fold.',
+      'Shape into 8-inch rings. Let proof for 1 hour under a plate.',
+      'Preheat oven to 165°C (325°F). Egg wash heavily and season with salt. Bake on parchment-lined sheet tray approximately 20 minutes.',
+      'Once baked and cooled, break into small pieces. Dry out and make bread crumbs.',
+      'Combine with dehydrated mustard greens and sauerkraut.'
     ]
   },
-  { id:'r65', name:'Apple Skin Gastrique', category:'Sauces', yield:'~500ml — pourable, light nappé',
-    ingredients:[
-      {amount:'200g',  name:'Pink Lady apple skins & cores (from trim)'},
-      {amount:'150g',  name:'Sugar'},
-      {amount:'150ml', name:'Apple cider vinegar'},
-      {amount:'100ml', name:'Water'},
-      {amount:'1g',    name:'Fine salt'}
+  {
+    id: 'r77', name: 'Yuzu–Chile–Caramel', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'300g', name:'Sugar'}, {amount:'7g', name:'Agar'},
+      {amount:'60g', name:'Heavy Cream'}, {amount:'60g', name:'Yuzu'},
+      {amount:'1 tsp', name:'Thai Chile, toasted, ground'},
+      {amount:'to taste', name:'Salt'}, {amount:'175g', name:'Water (divided — 85g + 90g)'}
     ],
-    steps:[
-      'Dry caramel the sugar in a heavy-bottomed pan over medium heat. Do not stir — swirl to even the melt. Cook to deep amber, pulling just before it smokes. Dark copper, not golden.',
-      'Deglaze carefully with apple cider vinegar. Stand back — it will seize violently and steam. Stir to dissolve any hardened caramel.',
-      'Add water, apple skins, and cores. Bring to a gentle simmer.',
-      'Simmer uncovered 20–25 minutes until skins are spent and liquid is lightly syrupy and coats a spoon.',
-      'Pass through a fine mesh strainer, pressing solids firmly to extract all liquid and pectin.',
-      'Season with salt. Adjust sweet-acid balance off heat — splash of vinegar if too sweet, pinch of dissolved sugar if too sharp.',
-      'Check consistency — pours freely, coats a spoon lightly. Too thick: add a splash of water. Too thin: reduce gently.',
-      'Service: warm gently to order, do not boil. Pool on plate or brush onto foie gras at pickup. Refrigerate, shelf life 2 weeks.'
+    steps: [
+      'Caramelize sugar until a deep golden brown over medium-low heat.',
+      'Remove from heat and add 85g water. Return to heat and bring to a simmer.',
+      'Combine 90g water, chiles, and agar in a small saucepan. Bring to a boil for 2 minutes.',
+      'Slowly add caramel to the water-agar mixture. Place over ice bath until firm.',
+      'Dice agar gelée, place into blender with cream and yuzu.',
+      'Purée until smooth and pass through chinois. Season with salt.'
     ]
   },
-  { id:'r66', name:'Avocado Purée', category:'Purees & Emulsions', yield:'~300g — Hamachi Crudo',
-    ingredients:[
-      {amount:'2 ea',  name:'Ripe Hass avocados'},
-      {amount:'20ml',  name:'Yuzu juice, fresh or bottled'},
-      {amount:'10ml',  name:'Agrumato lemon oil'},
-      {amount:'3g',    name:'Fine salt'}
+  {
+    id: 'r78', name: 'Lemon Sabayon', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'2 ea', name:'Large Eggs, cold'}, {amount:'2 ea', name:'Large Egg Yolks, cold'},
+      {amount:'150g', name:'Sugar'}, {amount:'120g', name:'Fresh Lemon Juice'},
+      {amount:'85g', name:'Unsalted Butter, cold, cut into 6 pieces'}
     ],
-    steps:[
-      'Halve and scoop avocados into blender. Discard pits and skin.',
-      'Add yuzu juice and salt. Blend on high until completely smooth — approximately 90 seconds.',
-      'With blender running, stream in agrumato lemon oil slowly. Blend 20 more seconds to fully incorporate.',
-      'Pass through a fine tamis. Taste and adjust salt. Silky with clean yuzu finish — agrumato should not read as a separate element.',
-      'Holding: press a thin film of agrumato lemon oil directly onto surface before wrapping tightly. This oil cap is the primary barrier against browning. Portion to order where possible — smaller frequent batches produce better color than holding through a long service.'
-    ]
-  }
-,
-  { id:'r67', name:'Yuzu Kosho Oil', category:'Sauces', yield:'~200ml — Hamachi Crudo',
-    ingredients:[
-      {amount:'200ml', name:'Light olive oil'},
-      {amount:'35g',   name:'Red yuzu kosho'},
-      {amount:'2g',    name:'Fine salt'}
-    ],
-    steps:[
-      'Combine red yuzu kosho and light olive oil in a blender.',
-      'Blend on high 60–90 seconds until fully emulsified and uniform. Oil will turn deep orange-red. No large pieces remaining.',
-      'Do not strain — suspended solids are the texture and visual on the plate.',
-      'Season with salt. Should read spicy, citrusy, bright — heat present but not aggressive. If kosho is particularly salty or hot, pull back to 28–30g.',
-      'Service: stir or shake before each use. Do not heat. Refrigerate, shelf life 4–5 days.'
+    steps: [
+      'Combine eggs, yolks, sugar, and lemon juice in a bowl over a double boiler.',
+      'Whisk constantly over simmering water until mixture thickens and reaches ribbon stage.',
+      'Remove from heat. Whisk in cold butter piece by piece until fully incorporated.',
+      'Pass through fine sieve. Use immediately or refrigerate.'
     ]
   },
-  { id:'r68', name:'Sauce Robert', category:'Sauces', yield:'~500ml — pourable, light nappé',
-    ingredients:[
-      {amount:'1 liter', name:'Brown beef stock, well reduced and seasoned'},
-      {amount:'225g',    name:'Pork tenderloin scraps, rough chopped'},
-      {amount:'200ml',   name:'Dry red wine'},
-      {amount:'150ml',   name:'Dry white wine'},
-      {amount:'80g',     name:'Shallots (~2 medium), minced fine'},
-      {amount:'15g',     name:'Tomato paste'},
-      {amount:'30g',     name:'Unsalted butter, cold, divided'},
-      {amount:'25g',     name:'Whole grain mustard'},
-      {amount:'10g',     name:'Dijon mustard'},
-      {amount:'5g',      name:'Sugar'},
-      {amount:'3g',      name:'Fine salt'},
-      {amount:'1',       name:'Sprig thyme'},
-      {amount:'1',       name:'Bay leaf'}
+  {
+    id: 'r79', name: 'Pâte Sablée', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'340g', name:'Butter, cold'}, {amount:'420g', name:'AP Flour'},
+      {amount:'4 ea', name:'Eggs'}, {amount:'100g', name:'Sugar'},
+      {amount:'60g', name:'Cold Water'}
     ],
-    steps:[
-      'Heat pan over high until very hot. Roast pork scraps dry until deeply caramelized. Remove scraps, do not wipe the pan.',
-      'Reduce to medium-low. Add half the butter, sweat shallots until soft and translucent, 8–10 minutes. No color.',
-      'Push shallots aside. Cook tomato paste in center 2–3 minutes until deep brick. Combine with shallots.',
-      'Deglaze with red and white wine, scraping all fond. Add thyme, bay leaf, and scraps back in.',
-      'Reduce to au sec — just a few tablespoons remaining.',
-      'Add beef stock. Simmer, reduce by half, skimming as needed, until sauce coats a spoon lightly.',
-      'Strain through fine mesh, pressing scraps firmly. Discard solids.',
-      'Off heat, mount with remaining cold butter, whisking until glossy.',
-      'Still off heat, whisk in whole grain mustard and Dijon. Never add mustard to a boiling sauce.',
-      'Add sugar. Adjust salt. Service: warm gently, never boil after mustard is in. Shelf life 3–4 days refrigerated.'
+    steps: [
+      'Combine butter and flour in food processor. Pulse until mixture resembles coarse crumbs.',
+      'Add sugar, pulse briefly.',
+      'Add eggs one at a time with machine running. Add cold water as needed.',
+      'Dough should just come together — do not overmix.',
+      'Wrap and refrigerate at least 1 hour before using.',
+      'Can be made 1 day ahead. Keep chilled.'
     ]
   },
-  { id:'r69', name:'Pine Nut Citrus Crumble', category:'Components', yield:'~200g — Albacore',
-    ingredients:[
-      {amount:'200g',  name:'Pine nuts'},
-      {amount:'15g',   name:'Egg white (~½ white), room temperature, frothed'},
-      {amount:'8g',    name:'Sugar'},
-      {amount:'3g',    name:'Fine salt'},
-      {amount:'1',     name:'Lemon, zested'},
-      {amount:'1',     name:'Small orange, zested'},
-      {amount:'5g',    name:'Fresh tarragon or flat parsley, fine mince — added after baking'}
+  {
+    id: 'r80', name: 'Focaccia', category: 'Breads & Doughs',
+    yield: 'One sheet tray',
+    ingredients: [
+      {amount:'567g', name:'Bread Flour'}, {amount:'11g', name:'Salt'},
+      {amount:'5g', name:'Active Dry Yeast'}, {amount:'480g', name:'Water, 32°C'},
+      {amount:'as needed', name:'Olive Oil'}, {amount:'as needed', name:'Garlic'},
+      {amount:'as needed', name:'Fresh Herbs'}, {amount:'as needed', name:'Cheese'}
     ],
-    steps:[
-      'Preheat oven to 275°F / 135°C. Line sheet pan with parchment.',
-      'Whisk half egg white until frothy and loose — airy but still fluid. Do not over-whip.',
-      'Add sugar, salt, lemon zest, and orange zest to frothed white. Fold to combine.',
-      'Add pine nuts and toss until every nut has a thin, even film.',
-      'Spread in a single layer. No overlapping.',
-      'Bake 18–22 minutes, stirring every 7 minutes. Check at 15 — pine nuts burn fast. Pull when dry, golden, fragrant.',
-      'Cool completely on the pan.',
-      'Once fully cool, fold in fresh herbs. Do not add herbs before baking. Fold in right before plating. Store base (no herbs) airtight at room temp, 4–5 days.'
+    steps: [
+      'Combine flour, salt, and yeast. Add warm water and mix until shaggy dough forms.',
+      'Fold dough every 30 minutes for 2 hours (4 folds total).',
+      'Transfer to well-oiled sheet pan. Stretch gently to fill pan. If it springs back, rest 10 minutes and stretch again.',
+      'Drizzle generously with olive oil. Dimple surface with fingers.',
+      'Top with garlic, herbs, and/or cheese as desired.',
+      'Proof 45–60 minutes until puffy.',
+      'Bake at 230°C (450°F) for 20–25 minutes until deep golden brown.',
+      'Cool 10 minutes before slicing.'
     ]
   },
-  { id:'r70', name:'Bone Marrow & Chive Butter', category:'Components', yield:'~400g / 20 discs — ½" disc per plate',
-    ingredients:[
-      {amount:'4',     name:'Center-cut femur bones, 2" cross-cut (~120g marrow)'},
-      {amount:'1 tbsp',name:'Fine salt per quart of soaking water'},
-      {amount:'250g',  name:'Unsalted butter, room temperature'},
-      {amount:'120g',  name:'Poached bone marrow, fully cooled'},
-      {amount:'20g',   name:'Fresh chives, fine mince'},
-      {amount:'10g',   name:'Flat parsley, fine mince'},
-      {amount:'15ml',  name:'Lemon juice, fresh'},
-      {amount:'5g',    name:'Lemon zest'},
-      {amount:'8g',    name:'Fine salt'},
-      {amount:'2g',    name:'White pepper'}
+  {
+    id: 'r81', name: 'Creamy Dill and Garlic Dressing', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'5 cloves', name:'Garlic, peeled, minced'},
+      {amount:'85g', name:'Red Wine Vinegar'}, {amount:'2 tsp', name:'Shallots, peeled, minced'},
+      {amount:'85g', name:'Mascarpone Cheese'}, {amount:'225g', name:'Mayonnaise'},
+      {amount:'140g', name:'Buttermilk'}, {amount:'2 tsp', name:'Salt'},
+      {amount:'1 bunch', name:'Dill, leaves only, chopped'}
     ],
-    steps:[
-      'Submerge bones in cold salted water (1 tbsp salt per quart). Refrigerate 12–24 hours, changing water once halfway. Draws out blood, produces clean white marrow.',
-      'Set circulator or pot to 170°F / 77°C. Poach bones 10–12 minutes until marrow is just set and pulling from the bone.',
-      'Scoop marrow while warm. Blot on paper towels. Cool completely at room temp, then refrigerate until fully cold. Warm marrow will break the emulsion.',
-      'Cream butter in stand mixer with paddle ~3 minutes until light and smooth.',
-      'Add fully cooled marrow. Paddle until completely incorporated.',
-      'Fold in chives, parsley, lemon juice, lemon zest, salt, and white pepper by hand.',
-      'Season aggressively — it mellow when cold.',
-      'Roll in plastic wrap into a ~1.5" log. Twist ends firmly. Refrigerate minimum 2 hours, overnight preferred.',
-      'Service: slice ½" discs from cold log directly to order. Place on bavette at pickup. Refrigerate up to 5 days; freeze up to 4 weeks.'
+    steps: [
+      'Combine garlic and red wine vinegar. Let macerate 5 minutes.',
+      'Whisk in mascarpone until smooth.',
+      'Add mayonnaise and buttermilk. Whisk to emulsify — add buttermilk gradually to control consistency.',
+      'Fold in shallots and dill.',
+      'Season with salt. Adjust acid and seasoning to taste.',
+      'Refrigerate at least 30 minutes before serving to allow flavors to develop.'
     ]
   },
-  { id:'r71', name:'Rhubarb Sous Vide', category:'Components', yield:'~20 portions — Pork Tenderloin',
-    ingredients:[
-      {amount:'500g',  name:'Rhubarb, trimmed to 4" lengths, strings removed'},
-      {amount:'40g',   name:'Sugar'},
-      {amount:'20ml',  name:'Banyuls vinegar'},
-      {amount:'15g',   name:'Unsalted butter, cold, cubed'},
-      {amount:'3g',    name:'Fine salt'},
-      {amount:'2g',    name:'Fresh tarragon leaves'},
-      {amount:'1',     name:'Strip orange zest, no pith'}
+  {
+    id: 'r82', name: 'Tomato Gelée', category: 'Garnishes & Accoutrements',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'250g', name:'Tomato Water'}, {amount:'0.9g', name:'Agar Agar'}
     ],
-    steps:[
-      'Set circulator to 155°F / 68°C. Allow to reach full temp before bagging.',
-      'Trim rhubarb to 4" lengths. Remove strings with a vegetable peeler.',
-      'Toss with sugar and salt. Rest 5 minutes.',
-      'Add rhubarb, Banyuls vinegar, cold butter, tarragon, and orange zest to vacuum bag. Single layer if possible.',
-      'Seal on medium vacuum pressure — not full. Full pressure bruises stalks before cooking.',
-      'Cook at 155°F / 68°C for exactly 18 minutes. Do not exceed 20 minutes.',
-      'Transfer immediately to ice bath. Chill completely. Hold refrigerated in sealed bag up to 2 days. Do not freeze.',
-      'To order: cut bag, pour liquid into sauté pan. Set rhubarb aside. Reduce liquid 60–90 seconds until syrupy. Add rhubarb, roll gently to coat. Plate immediately.'
-    ]
-  }
-,
-  { id:'r72', name:'Lace Cookies', category:'Desserts', yield:'~30–40 cookies depending on size',
-    ingredients:[
-      {amount:'5 oz', name:'Corn syrup'},
-      {amount:'5 oz', name:'Unsalted butter'},
-      {amount:'5 oz', name:'Sugar'},
-      {amount:'5 oz', name:'All-purpose flour'}
-    ],
-    steps:[
-      'Combine corn syrup, butter, and sugar in a heavy-bottomed saucepan. Heat over medium, stirring, until butter is melted and sugar is dissolved. Do not boil.',
-      'Remove from heat. Add flour all at once and stir until fully incorporated and smooth. Batter will be thin and glossy.',
-      'Let batter cool slightly until fluid but not runny.',
-      'Drop small amounts (½ tsp) onto parchment-lined sheet pans, spacing at least 3" apart — they spread significantly.',
-      'Bake at 325°F until lacy, golden, and flat — approximately 8–10 minutes. Watch closely.',
-      'Cool on pan until just set, then transfer with a thin offset spatula. Shape immediately if desired — they harden quickly.',
-      'Store airtight at room temperature. Do not refrigerate.'
+    steps: [
+      'Combine tomato water and agar in a small saucepan.',
+      'Bring to a boil while whisking constantly. Hold at boil for 2 minutes.',
+      'Pour into desired mold or flat pan. Refrigerate until set, about 30 minutes.',
+      'Dice or cut as needed for service.'
     ]
   },
-  { id:'r73', name:'Meringue Garnish', category:'Desserts', yield:'Ratio-based — scales linearly',
-    ingredients:[
-      {amount:'100g', name:'Egg whites (ratio: 1 part)'},
-      {amount:'200g', name:'Sugar (ratio: 2 parts)'},
-      {amount:'2g',   name:'Fine salt (ratio: 0.02 parts)'},
-      {amount:'2g',   name:'Cornstarch (optional — keeps crisp)'},
-      {amount:'2g',   name:'White vinegar or lemon juice (optional — stabilizes)'}
+  {
+    id: 'r83', name: 'Tomato Tuile', category: 'Garnishes & Accoutrements',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'as needed', name:'Tomato Powder'}
     ],
-    steps:[
-      'Ratio: 1 part egg whites : 2 parts sugar : 0.02 parts salt. Scales linearly.',
-      'Whip egg whites and salt on medium speed until soft foam forms.',
-      'Slowly stream in sugar with mixer running. Increase to high and whip to very stiff, glossy peaks.',
-      'Fold in cornstarch and vinegar by hand if using.',
-      'Pipe or spoon desired shapes onto parchment-lined sheet pans.',
-      'Bake at 200°F / 95°C convection for 1.5–2 hours until completely dry. Should release cleanly from parchment.',
-      'Cool completely in oven with door cracked. Store airtight at room temperature.'
+    steps: [
+      'Dehydrate tomatoes at 80°C (175°F) for 4 hours or until completely crisp.',
+      'Process in spice grinder or VitaPrep until fine powder forms.',
+      'Search out and use your standard tuile recipe as the base.',
+      'Season tuile batter with tomato powder to taste.',
+      'Spread thinly and bake until crisp. Shape while warm.'
+    ]
+  },
+  {
+    id: 'r84', name: 'Smoked Sungolds', category: 'Garnishes & Accoutrements',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'as needed', name:'Sungold Tomatoes'},
+      {amount:'as needed', name:'Olive Oil'},
+      {amount:'to taste', name:'Salt'}
+    ],
+    steps: [
+      'Cold smoke Sungold tomatoes using your preferred smoking setup.',
+      'Place smoked tomatoes in olive oil.',
+      'Sous vide at 57°C (135°F) for 1 hour under refrigeration.',
+      'Season with salt. Use immediately or hold in oil.'
+    ]
+  },
+  {
+    id: 'r85', name: 'Gnudi', category: 'Pasta & Grains',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'450g', name:'Fresh Ricotta Cheese'},
+      {amount:'1 ea', name:'Large Egg'},
+      {amount:'30g', name:'Pecorino Romano, finely grated, plus more for serving'},
+      {amount:'2g', name:'Salt'},
+      {amount:'pinch', name:'Ground White Pepper'},
+      {amount:'90g', name:'AP Flour, plus more for coating'}
+    ],
+    steps: [
+      'Line a medium bowl with several layers of paper towels. Spoon in ricotta. Let drain at least 30 minutes and up to 1 hour.',
+      'Beat egg, Pecorino, salt, and white pepper in a large bowl to blend. Mix in drained ricotta.',
+      'Sprinkle flour over and stir gently to blend. Cover and chill dough 1 hour. Do ahead: can be made 1 day ahead — keep chilled.',
+      'On a floured surface, roll portions of dough into logs and cut into bite-sized pieces. Roll lightly in flour.',
+      'Cook in gently simmering salted water until gnudi float and are cooked through, about 3–4 minutes.',
+      'Serve immediately with desired sauce. Finish with additional Pecorino.'
+    ]
+  },
+  {
+    id: 'r86', name: 'Coffee Cake', category: 'Pastry & Desserts',
+    yield: '1 cake',
+    ingredients: [
+      {amount:'395g', name:'Unsalted Butter, room temperature'},
+      {amount:'300g', name:'Granulated Sugar'},
+      {amount:'3 ea', name:'Extra-Large Eggs, room temperature'},
+      {amount:'7g', name:'Pure Vanilla Extract'},
+      {amount:'360g', name:'Sour Cream'},
+      {amount:'300g', name:'Cake Flour (not self-rising)'},
+      {amount:'8g', name:'Baking Powder'},
+      {amount:'2g', name:'Baking Soda'},
+      {amount:'2g', name:'Kosher Salt'},
+      {amount:'50g', name:'Light Brown Sugar, packed (streusel)'},
+      {amount:'60g', name:'AP Flour (streusel)'},
+      {amount:'6g', name:'Ground Cinnamon (streusel)'},
+      {amount:'1g', name:'Kosher Salt (streusel)'},
+      {amount:'42g', name:'Cold Unsalted Butter, cut into pieces (streusel)'}
+    ],
+    steps: [
+      'Preheat oven to 175°C (350°F). Grease and flour a 25cm (10-inch) tube pan.',
+      'Make streusel: combine brown sugar, AP flour, cinnamon, and salt. Cut in cold butter until crumbly. Set aside.',
+      'Cream butter and sugar until light and fluffy, about 5 minutes.',
+      'Add eggs one at a time, beating well after each. Add vanilla.',
+      'Alternate adding sour cream and the sifted dry ingredients (cake flour, baking powder, baking soda, salt), beginning and ending with dry ingredients.',
+      'Pour half the batter into prepared pan. Sprinkle half the streusel. Add remaining batter and top with remaining streusel.',
+      'Bake 55–65 minutes until a toothpick inserted in center comes out clean.',
+      'Cool in pan 30 minutes, then turn out onto a rack.'
+    ]
+  },
+  {
+    id: 'r87', name: 'Chocolate Brittle Gel', category: 'Pastry & Desserts',
+    yield: 'One sheet pan',
+    ingredients: [
+      {amount:'50g', name:'Sugar'}, {amount:'1g', name:'Agar'},
+      {amount:'250g', name:'Milk'}, {amount:'57g', name:'Bittersweet Chocolate'}
+    ],
+    steps: [
+      'Whisk sugar and agar together in a small saucepan.',
+      'Whisk in milk. Stirring constantly, bring to a boil.',
+      'Reduce heat and simmer for 5 minutes, still stirring.',
+      'Stir in chocolate and emulsify with an immersion blender, keeping blender under the surface to avoid air bubbles.',
+      'Pour onto a parchment-lined baking sheet and refrigerate until set, about 2 hours.',
+      'Break into shards or cut as desired for service.'
+    ]
+  },
+  {
+    id: 'r88', name: 'Buttermilk Vanilla Cake Doughnuts', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'55g', name:'Unsalted Butter, room temperature'},
+      {amount:'200g', name:'Granulated Sugar'},
+      {amount:'2 ea', name:'Eggs'},
+      {amount:'240g', name:'Buttermilk'},
+      {amount:'450g', name:'AP Flour'},
+      {amount:'4g', name:'Baking Powder'},
+      {amount:'2g', name:'Baking Soda'},
+      {amount:'60g', name:'Milk (glaze)'},
+      {amount:'240g', name:'Powdered Sugar (glaze)'},
+      {amount:'as needed', name:'Pop Rocks (glaze)'},
+      {amount:'1 ea', name:'Vanilla Bean (glaze)'}
+    ],
+    steps: [
+      'In an electric mixer fitted with paddle, cream butter and sugar. Add eggs one at a time, beat until incorporated.',
+      'With machine running, slowly add buttermilk.',
+      'Switch to dough hook. Sift together flour, baking powder, and baking soda. Add flour mixture 1 cup at a time until dough forms a smooth ball and climbs the hook.',
+      'Place dough in a greased bowl, turn once, cover with plastic wrap. Refrigerate 1 hour.',
+      'Preheat fryer to 175°C (350°F). Turn dough out onto floured surface and roll to 1.5cm thick.',
+      'Cut with doughnut cutter or two biscuit cutters. Fry in batches until golden brown. Remove and drain on paper towels.',
+      'Make glaze: whisk milk, powdered sugar, and vanilla bean seeds until smooth.',
+      'Dip doughnuts in glaze while warm. Finish with Pop Rocks immediately before service.'
+    ]
+  },
+  {
+    id: 'r89', name: 'Italian Meringue', category: 'Pastry & Desserts',
+    yield: 'Full batch: ~1.5kg / Half batch: ~375g',
+    ingredients: [
+      {amount:'225g (full) / 115g (half)', name:'Sugar'},
+      {amount:'55g (full) / 28g (half)', name:'Water'},
+      {amount:'450g (full) / 115g (half)', name:'Egg Whites'}
+    ],
+    steps: [
+      'Combine sugar and water in a small saucepan. Bring to 114°C (238°F) without stirring.',
+      'Meanwhile, place egg whites in stand mixer and beat to soft peak.',
+      'With mixer running on high, drizzle hot syrup down the side of the bowl in a thick, steady stream.',
+      'Continue whipping on high until meringue is glossy, thick, and holds stiff peaks — about 8–10 minutes.',
+      'Use immediately or hold at room temperature for up to 2 hours.'
+    ]
+  },
+  {
+    id: 'r90', name: 'English Muffin Bread', category: 'Breads & Doughs',
+    yield: 'Two loaves',
+    ingredients: [
+      {amount:'360g', name:'AP Flour'},
+      {amount:'7g', name:'Active Dry Yeast'},
+      {amount:'6g', name:'White Sugar'},
+      {amount:'4g', name:'Salt'},
+      {amount:'0.5g', name:'Baking Powder'},
+      {amount:'240g', name:'Warm Milk'},
+      {amount:'60g', name:'Water'}
+    ],
+    steps: [
+      'Place ingredients in bread machine pan in the order suggested by the manufacturer. Select the dough cycle.',
+      'Divide dough into two unequal parts and shape into loaves. Place in one 23x13cm loaf pan and one 18x8cm loaf pan. Non-stick pans preferred; greased and floured normal pans will suffice.',
+      'Cover and allow to rise until doubled in size.',
+      'Bake at 205°C (400°F) for about 15 minutes. Bake longer for a more browned, chewier crust.'
+    ]
+  },
+  {
+    id: 'r91', name: 'Crostata', category: 'Pastry & Desserts',
+    yield: 'One 25cm tart',
+    ingredients: [
+      {amount:'400g', name:'Tipo 00 or Pastry Flour'},
+      {amount:'100g', name:'Granulated Sugar'},
+      {amount:'100g', name:'Butter, softened'},
+      {amount:'2 ea', name:'Large Eggs'},
+      {amount:'5g', name:'Vanilla Extract'},
+      {amount:'8g', name:'Baking Powder'},
+      {amount:'450g', name:'Orange Marmalade (or other soft jam) — filling'}
+    ],
+    steps: [
+      'Preheat oven to 175°C (350°F).',
+      'Place all dough ingredients into a food processor and pulse just until mixed — should resemble small peas.',
+      'Dump mixture onto a counter and press ¾ of it into the bottom and halfway up the sides of a 25cm (10-inch) tart pan with a removable bottom.',
+      'Fill with jam, spreading evenly across the bottom.',
+      'Form remaining dough into a rectangle on a lightly floured surface. Roll to 3mm (⅛ inch) thick. Cut into 1.5cm strips and create a lattice top across the tart.',
+      'Bake about 25 minutes until the tart is light brown and the jam is bubbly.',
+      'Cool to room temperature before serving.'
+    ]
+  },
+  {
+    id: 'r92', name: 'Miso Butterscotch', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'285g', name:'Light Brown Sugar'},
+      {amount:'200g', name:'Glucose'},
+      {amount:'85g', name:'Butter'},
+      {amount:'200g', name:'Milk'},
+      {amount:'140g', name:'White Miso'}
+    ],
+    steps: [
+      'Combine brown sugar, glucose, and butter in a heavy saucepan.',
+      'Cook over medium heat, stirring, until sugar dissolves and mixture begins to caramelize.',
+      'Carefully add milk — mixture will bubble vigorously. Stir to combine.',
+      'Cook to desired consistency, stirring frequently.',
+      'Remove from heat and whisk in white miso until fully incorporated.',
+      'Pass through fine sieve. Cool and refrigerate. Reheat gently before service.'
+    ]
+  },
+  {
+    id: 'r93', name: 'Lemon–Orange Purée', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'150g', name:'Lemon Zest (peeler only — absolutely no white pith)'},
+      {amount:'50g', name:'Orange Zest (peeler only — no white pith)'},
+      {amount:'very small pinch', name:'Saffron'},
+      {amount:'1L', name:'Simple Syrup'},
+      {amount:'1 ea', name:'Lemon, juiced'},
+      {amount:'15g', name:'Lemon Aggrumato Oil'}
+    ],
+    steps: [
+      'Blanch lemon and orange peel in boiling salted water for 45 seconds. Shock and drain.',
+      'Add lemon peel to simple syrup with saffron. Cook until tender, about 10 minutes.',
+      'Separate solid from liquid. Reserve liquid.',
+      'VitaPrep peel with lemon juice and lemon oil. Add reserved simple syrup as needed.',
+      'Season with salt and pass through tamis.'
+    ]
+  },
+  {
+    id: 'r94', name: 'Flexible Chocolate', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'375g', name:'Chocolate, 72% cacao'},
+      {amount:'1 sheet', name:'Gelatin'},
+      {amount:'50g', name:'Water'},
+      {amount:'100g', name:'Sorbitol'},
+      {amount:'3g', name:'Agar'},
+      {amount:'50g', name:'Glucose'},
+      {amount:'900g', name:'Heavy Cream'},
+      {amount:'2g', name:'Bolivian Rose Salt or Smoked Salt'}
+    ],
+    steps: [
+      'Place chocolate in stainless steel bowl.',
+      'Bring water, sorbitol, and agar to a boil, stirring constantly.',
+      'Add gelatin and glucose. Bring back to a boil, stirring constantly.',
+      'Add cream and simmer for 30 seconds.',
+      'Pour over chocolate in two stages through chinois. Emulsify between each addition.',
+      'Pour into lined pan. Refrigerate until set.',
+      'Once set, flexible chocolate can be peeled, cut, or shaped as needed.'
+    ]
+  },
+  {
+    id: 'r95', name: 'Homemade Marshmallows', category: 'Pastry & Desserts',
+    yield: 'About 48 squares',
+    ingredients: [
+      {amount:'100–200g', name:'Confectioners Sugar, for coating'},
+      {amount:'240g', name:'Cool Water, divided (120g + 120g)'},
+      {amount:'17 sheets', name:'Gelatin (bloomed in 120g water)'},
+      {amount:'300g', name:'Granulated Sugar'},
+      {amount:'240g', name:'Light Corn Syrup'},
+      {amount:'1.5g', name:'Fine Sea Salt'},
+      {amount:'15g', name:'Vanilla Extract'}
+    ],
+    steps: [
+      'Line a 23x33cm (9x13-inch) baking pan with foil, leaving a 5cm overhang on the sides. Lightly grease the foil and any exposed parts of the dish. Sprinkle entire dish with confectioners sugar. Set aside.',
+      'Bloom gelatin sheets in 120g cold water in the bowl of a stand mixer fitted with the whisk attachment. Set aside to soften.',
+      'Combine remaining 120g water, sugar, corn syrup, and salt in a small saucepan over medium-high heat. Bring to a boil, stirring to dissolve sugar. When dissolved, attach a candy thermometer and boil without stirring until temperature reaches 115°C (240°F), about 10–12 minutes. Remove from heat and let cool 1 minute.',
+      'Turn mixer on low. With mixer running, slowly drizzle hot syrup down the side of the bowl. Slowly increase speed to high and whip until marshmallow is very thick, fluffy, and tripled in size, about 15 minutes. Near end of mixing, add vanilla extract.',
+      'Cover a large rubber spatula in cooking spray and scrape marshmallow into prepared pan. Smooth top and sprinkle powdered sugar over the surface. Allow to set uncovered at room temperature for at least 3 hours.',
+      'To cut, transfer foil and marshmallow to cutting board. Coat a very sharp knife with cooking spray and slice into 2.5–4cm squares. Dredge sticky sides in remaining powdered sugar.'
+    ]
+  },
+  {
+    id: 'r96', name: 'Almond "Granola"', category: 'Garnishes & Accoutrements',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'115g', name:'Almonds, Whole, Marcona'},
+      {amount:'28g', name:'Glucose Powder'},
+      {amount:'85g', name:'Marshmallow'},
+      {amount:'55g', name:'Water'},
+      {amount:'2.8g', name:'Salt'}
+    ],
+    steps: [
+      'Combine glucose powder, water, and marshmallow in a saucepan.',
+      'Bring to a simmer, stirring until marshmallow is fully dissolved.',
+      'Add almonds. Cook, stirring, until almonds are well coated.',
+      'Spread onto a parchment-lined sheet tray. Cool completely.',
+      'Once cooled, grind coarsely in a food processor.',
+      'Spread back on sheet tray and bake at 160°C (325°F) until golden and crisp.',
+      'Cool completely before storing. Keep airtight.'
+    ]
+  },
+  {
+    id: 'r97', name: 'Graham Crackers', category: 'Pastry & Desserts',
+    yield: 'Variable — bake at 175°C (350°F)',
+    ingredients: [
+      {amount:'110g', name:'Shortening'},
+      {amount:'165g', name:'Packed Brown Sugar'},
+      {amount:'5g', name:'Vanilla Extract'},
+      {amount:'240g', name:'Whole Wheat Flour'},
+      {amount:'120g', name:'AP Flour'},
+      {amount:'4g', name:'Baking Powder'},
+      {amount:'2g', name:'Baking Soda'},
+      {amount:'1.5g', name:'Salt'},
+      {amount:'60g', name:'Milk'}
+    ],
+    steps: [
+      'Cream shortening and brown sugar in mixing bowl. Stir in vanilla.',
+      'Combine dry ingredients in a separate bowl.',
+      'Stir dry ingredients into creamed mixture alternately with milk.',
+      'Cover and chill until firm.',
+      'Roll dough out on a floured surface to 3mm (⅛ inch) thick.',
+      'Cut into rectangles and arrange 1.5cm apart on a greased cookie sheet.',
+      'Bake at 175°C (350°F) for 10–12 minutes until edges are golden brown.',
+      'Remove from baking sheets and cool on a wire rack.'
+    ]
+  },
+  {
+    id: 'r98', name: 'Chocolate Cremeux', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'250g', name:'Chocolate, 72%'},
+      {amount:'200g', name:'Heavy Cream'},
+      {amount:'100g', name:'Hazelnut Paste'},
+      {amount:'160g', name:'Water'},
+      {amount:'2g', name:'Agar Agar'},
+      {amount:'49g', name:'Sorbitol'},
+      {amount:'20g', name:'Glucose Powder'},
+      {amount:'1g', name:'Bolivian Rose Salt'},
+      {amount:'2.5 sheets', name:'Gelatin'}
+    ],
+    steps: [
+      'Combine water, sorbitol, agar agar, and glucose. Boil for 2 minutes.',
+      'Scald cream. Slowly incorporate into chocolate — go slow, no air bubbles.',
+      'Slowly add sorbitol–water mixture. Fold in hazelnut paste.',
+      'Stir in bloomed gelatin until dissolved.',
+      'Pour into desired molds.',
+      'Freeze until set. Unmold and temper to room temperature before serving.'
+    ]
+  },
+  {
+    id: 'r99', name: 'Veal Stock', category: 'Stocks & Bases',
+    yield: 'Large batch',
+    ingredients: [
+      {amount:'9kg', name:'Veal Bones'},
+      {amount:'2.3kg', name:'Calves Feet'},
+      {amount:'340g', name:'Tomato Paste'},
+      {amount:'900g', name:'Fresh Tomatoes'},
+      {amount:'680g', name:'Onion'},
+      {amount:'225g', name:'Leeks'},
+      {amount:'225g', name:'Celery Root'},
+      {amount:'225g', name:'Carrots'},
+      {amount:'225g', name:'Parsnips'},
+      {amount:'1 ea', name:'Sachet — Green Leek, Thyme, Bay Leaves, Parsley Stems (if available)'}
+    ],
+    steps: [
+      'Blanch bones and feet: start in cold water, bring to a gentle simmer. Skim consistently while bringing up to temp.',
+      'Remove bones and spray off with cold water to remove coagulated blood and impurities.',
+      'Place bones back in stock pot with cold water using a ratio of 8:1 (Bones:Water).',
+      'Simmer for 12–16 hours, skimming consistently.',
+      'Once simmered, add tomato paste, tomatoes, vegetables, and sachet. Simmer for about 3 more hours while skimming.',
+      'Strain through chinois. Save bones.',
+      'Place bones back into stock pot to make a remouillage. Simmer for 12–16 more hours.',
+      'Strain. Place both stocks on stove and reduce until Napé. Once proper consistency, strain through cheesecloth and chinois. Reserve.',
+      'Note: If stock is needed for a braise and not a sauce, use remouillage.'
+    ]
+  },
+  {
+    id: 'r100', name: 'Brown Butter Purée', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'225g', name:'Browned Milk Solids'},
+      {amount:'90g', name:'Water'},
+      {amount:'2 tsp', name:'Corn Syrup'},
+      {amount:'1 tbsp', name:'Sherry Vinegar'}
+    ],
+    steps: [
+      'See Justin.'
+    ]
+  },
+  {
+    id: 'r101', name: 'Brioche II', category: 'Breads & Doughs',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'120g', name:'Water, Warm'},
+      {amount:'7g', name:'Active Dry Yeast'},
+      {amount:'298g', name:'Cake Flour'},
+      {amount:'284g', name:'AP Flour'},
+      {amount:'66g', name:'Sugar'},
+      {amount:'12g', name:'Salt'},
+      {amount:'6 ea', name:'Eggs, Whole, Room Temperature'},
+      {amount:'284g', name:'Butter, Cubed, Room Temperature'}
+    ],
+    steps: [
+      'Bloom yeast in warm water for 5 minutes.',
+      'In stand mixer with dough hook, combine both flours, sugar, and salt.',
+      'Add eggs one at a time with machine on low, then add yeast mixture.',
+      'Mix on medium until dough is smooth and pulls away from the bowl, about 10 minutes.',
+      'Add butter a few cubes at a time on medium speed. Mix until fully incorporated and dough is silky, about 10 more minutes.',
+      'Transfer to a greased bowl, cover, and refrigerate overnight (minimum 8 hours).',
+      'Shape as needed. Proof until doubled. Egg wash and bake at 175°C (350°F) until deep golden brown.'
+    ]
+  },
+  {
+    id: 'r102', name: 'Dehydrated Chocolate Mousse', category: 'Pastry & Desserts',
+    yield: '1 dehydrator tray',
+    ingredients: [
+      {amount:'80g', name:'Dark Chocolate'},
+      {amount:'20g', name:'Sugar'},
+      {amount:'pinch', name:'Salt'},
+      {amount:'75g', name:'Egg Whites'},
+      {amount:'20g', name:'Egg Yolks, room temperature'}
+    ],
+    steps: [
+      'Preheat oven to 65–74°C (150–165°F).',
+      'Melt chocolate over a double boiler in a clean metal or glass bowl.',
+      'In a clean bowl, whip egg whites and a pinch of salt to a soft peak. Then slowly add sugar, beating until meringue holds medium stiff peaks.',
+      'While meringue is whipping, slowly add egg yolks to the melted chocolate.',
+      'Gently fold meringue into the chocolate mixture in two additions.',
+      'Spread mousse onto an inverted, acetate-lined sheet tray.',
+      'Place sheet tray in the oven overnight.',
+      'When the mousse is completely dry, remove from the oven and break into tiny pieces. Keep away from moisture.'
+    ]
+  },
+  {
+    id: 'r103', name: 'Vitello Tonnato', category: 'Proteins',
+    yield: '4–6 portions',
+    ingredients: [
+      {amount:'360g', name:'Dry White Wine'},
+      {amount:'1 stalk', name:'Celery, roughly chopped'},
+      {amount:'1 ea', name:'Medium Onion, quartered'},
+      {amount:'1 ea', name:'Carrot, roughly chopped'},
+      {amount:'1 ea', name:'Leek, white part only, rinsed and chopped'},
+      {amount:'4 sprigs', name:'Marjoram'},
+      {amount:'4 sprigs', name:'Thyme'},
+      {amount:'5 cloves', name:'Garlic, peeled'},
+      {amount:'900–1100g', name:'Veal Roast, top round, trussed (no thicker than 8cm)'},
+      {amount:'2 ea', name:'Egg Yolks, room temperature (sauce)'},
+      {amount:'to taste', name:'Sea Salt (sauce)'},
+      {amount:'530g', name:'Extra Virgin Olive Oil (sauce)'},
+      {amount:'75g', name:'Fresh Lemon Juice (sauce)'},
+      {amount:'1 can (200g)', name:'Tuna, packed in oil, drained (sauce)'},
+      {amount:'5 ea', name:'Anchovy Fillets (sauce)'},
+      {amount:'45g', name:'Capers, drained (sauce)'},
+      {amount:'as needed', name:'Lemon slices, black olives, capers, parsley, anchovy — for garnish'}
+    ],
+    steps: [
+      'In a pot just large enough to fit veal, combine wine, celery, onion, carrot, leek, marjoram, thyme, and garlic. Add 720g water and bring to a boil.',
+      'Add veal and bring back to a boil. Immediately turn off heat, cover pot, and let veal cool in its liquid 2–3 hours. When completely cool, thinly slice veal to about 1.5–3mm thick.',
+      'Make tonnato sauce: Whisk egg yolks and ¼ tsp salt until pale yellow. Beginning a drop at a time, add 300g oil, whisking continually. As mixture thickens, you can add oil more quickly. When quite thick, whisk in 15g lemon juice. Continue adding oil until all absorbed and mayonnaise is thick and shiny. Whisk in another 15g lemon juice.',
+      'Drain tuna and place in food processor with anchovies, remaining 230g olive oil, remaining lemon juice, and capers. Process until creamy and uniformly blended.',
+      'Scrape tuna mixture into bowl with mayonnaise and fold to combine. Taste — should be tangy and highly seasoned. Refrigerate until needed.',
+      'To serve: spread tonnato sauce on plates. Lay veal slices over sauce. Garnish with lemon slices, black olives, capers, parsley leaves, or anchovy fillets.'
+    ]
+  },
+  {
+    id: 'r104', name: 'Lemon Curd', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'115g', name:'Unsalted Butter (1 stick)'},
+      {amount:'60g', name:'Crème Fraîche'},
+      {amount:'2 ea', name:'Large Eggs'},
+      {amount:'3 ea', name:'Large Egg Yolks'},
+      {amount:'180g', name:'Fresh Lemon Juice'},
+      {amount:'150g', name:'Sugar'},
+      {amount:'3g', name:'Lemon Zest'}
+    ],
+    steps: ['See Justin.']
+  },
+  {
+    id: 'r105', name: 'Milk Chocolate Cremeux', category: 'Pastry & Desserts',
+    yield: 'Approximately 720g',
+    ingredients: [
+      {amount:'250g', name:'Milk Chocolate, chopped'},
+      {amount:'400g', name:'Heavy Cream'},
+      {amount:'60g', name:'Water'},
+      {amount:'2g', name:'Agar Agar'},
+      {amount:'20g', name:'Glucose Syrup'},
+      {amount:'2 sheets', name:'Gelatin, bloomed'}
+    ],
+    steps: [
+      'Place chocolate in a mixing bowl and reserve. Begin heating cream.',
+      'Meanwhile, combine water with agar agar and glucose. Place in a small saucepan and gently bring to a boil, holding for 2–3 minutes.',
+      'Once cream has boiled, remove from heat and gradually incorporate into the chocolate.',
+      'Follow with the agar mixture. Add the bloomed gelatin and stir until dissolved.',
+      'Transfer to forms and freeze.',
+      'Unmold and temper to room temperature before serving.'
+    ]
+  },
+  {
+    id: 'r106', name: 'Cocoa Cavatelli', category: 'Pasta & Grains',
+    yield: 'Variable (large batch note: 2kg AP flour)',
+    ingredients: [
+      {amount:'300g', name:'White AP Flour'},
+      {amount:'240g', name:'Semolina Flour'},
+      {amount:'30g', name:'Dark Unsweetened Cocoa Powder'},
+      {amount:'30g', name:'Olive Oil'},
+      {amount:'pinch', name:'Salt'},
+      {amount:'up to 180g', name:'Warm Water (not exceeding 60% of total dry goods)'}
+    ],
+    steps: [
+      'Combine both flours, cocoa powder, and salt in a bowl or on a board.',
+      'Add olive oil and mix in.',
+      'Gradually add warm water, mixing until dough comes together. Do not exceed 60% water to dry goods ratio.',
+      'Knead until smooth and elastic, about 8–10 minutes. Rest covered for 30 minutes.',
+      'Roll dough into thin ropes about 1cm diameter. Cut into 1.5cm pieces.',
+      'Using a cavatelli board or gnocchi paddle, roll each piece with your thumb to create the characteristic shell shape.',
+      'Cook in well-salted boiling water until cavatelli float and are cooked through. Finish in sauce.'
+    ]
+  },
+  {
+    id: 'r107', name: 'Matsutake Mushroom Ganache', category: 'Sauces & Purées',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'250g', name:'Matsutake Mushroom Stems (local)'},
+      {amount:'40g', name:'White Chocolate'},
+      {amount:'250g', name:'Heavy Cream'},
+      {amount:'50g', name:'Butter'},
+      {amount:'4g', name:'Ultra-Sperse'}
+    ],
+    steps: ['See Justin.']
+  },
+  {
+    id: 'r108', name: 'Pizzelle', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'200g', name:'Sugar'},
+      {amount:'240g', name:'Vegetable Oil'},
+      {amount:'3 ea', name:'Eggs'},
+      {amount:'2.5g', name:'Salt'},
+      {amount:'zest of 1', name:'Orange'},
+      {amount:'15g', name:'Vanilla Extract'},
+      {amount:'360g', name:'AP Flour'}
+    ],
+    steps: [
+      'Whisk together sugar, vegetable oil, eggs, salt, orange zest, and vanilla extract until well combined.',
+      'Fold in flour until smooth batter forms. Do not overmix.',
+      'Rest batter 15 minutes.',
+      'Preheat pizzelle iron. Lightly grease iron.',
+      'Drop about 1 tablespoon batter onto each grid. Close and cook until golden, about 30–60 seconds depending on iron.',
+      'Remove with a fork and cool flat for crisp pizzelle, or shape immediately while warm.',
+      'Store in airtight container at room temperature.'
+    ]
+  },
+  {
+    id: 'r109', name: 'Corn Bread', category: 'Breads & Doughs',
+    yield: 'One 25cm cast-iron skillet or 20cm square pan',
+    ingredients: [
+      {amount:'55g', name:'Fat (butter, olive oil, lard, or bacon drippings)'},
+      {amount:'360g', name:'Medium-Grind Cornmeal'},
+      {amount:'60g', name:'AP Flour'},
+      {amount:'18g', name:'Baking Powder'},
+      {amount:'4g', name:'Salt'},
+      {amount:'2 ea', name:'Eggs'},
+      {amount:'300g', name:'Whole Milk, more if needed'}
+    ],
+    steps: [
+      'Preheat oven to 190°C (375°F). Place fat in a 25cm cast-iron skillet or 20cm square baking pan.',
+      'Put pan with fat in oven to heat.',
+      'Meanwhile, combine dry ingredients (cornmeal, flour, baking powder, salt) in a bowl.',
+      'Mix eggs into milk, then stir into dry ingredients with a few swift strokes. If mixture seems dry, add another tablespoon or two of milk.',
+      'When fat and oven are hot, remove skillet or pan from oven, pour batter into it, and smooth out top.',
+      'Return pan to oven. Bake about 30 minutes until top is lightly browned and sides have pulled away from pan. A toothpick inserted in center will come out clean.'
+    ]
+  },
+  {
+    id: 'r110', name: 'Lemon Cream', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'zest of 3', name:'Lemons'},
+      {amount:'200g', name:'Sugar'},
+      {amount:'4 ea', name:'Eggs'},
+      {amount:'125g', name:'Lemon Juice'},
+      {amount:'10g', name:'Gelatin Sheets, bloomed'},
+      {amount:'295g', name:'Soft Butter'}
+    ],
+    steps: [
+      'Combine lemon zest, sugar, eggs, and lemon juice. Cook to 82°C (180°F), stirring constantly.',
+      'Add bloomed gelatin sheets and stir until dissolved.',
+      'Place in blender through a sieve. Cool to 60°C (140°F).',
+      'Add 295g soft butter in four additions, blending between each addition until fully emulsified.',
+      'Transfer to desired mold or container. Refrigerate until set.'
+    ]
+  },
+  {
+    id: 'r111', name: 'Milk Chocolate Cremeux #2', category: 'Pastry & Desserts',
+    yield: 'Approximately 720g',
+    ingredients: [
+      {amount:'250g', name:'Milk Chocolate, chopped'},
+      {amount:'400g', name:'Heavy Cream'},
+      {amount:'60g', name:'Water'},
+      {amount:'2g', name:'Agar Agar'},
+      {amount:'20g', name:'Glucose Syrup'},
+      {amount:'2 sheets', name:'Gelatin, bloomed'}
+    ],
+    steps: [
+      'Place chocolate in a mixing bowl and reserve. Begin heating cream.',
+      'Meanwhile, combine water with agar agar and glucose. Place in a small saucepan and gently bring to a boil, holding for 2–3 minutes.',
+      'Once cream has boiled, remove from heat and gradually incorporate into the chocolate.',
+      'Follow with the agar mixture. Add the bloomed gelatin and stir until dissolved.',
+      'Transfer to forms and freeze.',
+      'Unmold and temper to room temperature before serving.'
+    ]
+  },
+  {
+    id: 'r112', name: 'Marshmallow Fluff', category: 'Pastry & Desserts',
+    yield: 'Variable',
+    ingredients: [
+      {amount:'50g', name:'Egg Whites'},
+      {amount:'100g', name:'Sugar'},
+      {amount:'200g', name:'Glucose'},
+      {amount:'65g', name:'Water'},
+      {amount:'5g', name:'Vanilla Extract'}
+    ],
+    steps: [
+      'Combine sugar, glucose, and water in a small saucepan. Cook to 90°C (194°F).',
+      'Meanwhile, begin whipping egg whites in stand mixer to soft peaks.',
+      'When syrup reaches 90°C, slowly drizzle down the side of the bowl with mixer running.',
+      'Increase speed to high and whip until glossy, thick, and mixture holds stiff peaks — a few minutes more.',
+      'Add vanilla and whip briefly to incorporate.',
+      'Use immediately or hold at room temperature for up to 2 hours.'
     ]
   }
 ];
 
-window.doSignIn = async function() {
-  L('Opening Google sign-in popup...');
-  try {
-    const result = await signInWithPopup(auth, new GoogleAuthProvider());
-    L('✓ Signed in as: ' + result.user.email);
-    L('UID: ' + result.user.uid);
-    document.getElementById('btn-write').disabled = false;
-    L('\nReady — click "Write r60–r63 to Firestore"');
-  } catch(e) {
-    L('✗ Sign-in error: ' + e.code + ' — ' + e.message);
-  }
-};
+window.pushRecipes = async function() {
+  const btn = document.getElementById('pushBtn');
+  const log = document.getElementById('log');
+  btn.disabled = true;
+  btn.textContent = 'PUSHING...';
+  log.innerHTML = '<span class="info">Starting push of ' + NEW_RECIPES.length + ' recipes...\n\n</span>';
 
-window.doWrite = async function() {
-  const user = auth.currentUser;
-  if (!user) { L('Not signed in!'); return; }
-  L('\nCurrent user: ' + user.email + ' (uid: ' + user.uid + ')');
-  L('Starting writes...\n');
+  let success = 0;
+  let errors = 0;
 
-  for (const recipe of RECIPES) {
-    L('Writing ' + recipe.name + ' (id: ' + recipe.id + ')...');
+  for (const recipe of NEW_RECIPES) {
     try {
       await setDoc(doc(db, 'recipes', recipe.id), recipe);
-      L('  ✓ Written successfully');
-      // Immediately verify it's readable
-      const check = await getDoc(doc(db, 'recipes', recipe.id));
-      if (check.exists()) {
-        L('  ✓ Verified readable: ' + check.data().name);
-      } else {
-        L('  ✗ Write appeared to succeed but doc not found on read-back!');
-      }
-    } catch(e) {
-      L('  ✗ WRITE FAILED: ' + e.code + ' — ' + e.message);
+      log.innerHTML += `<span class="ok">✓ ${recipe.id} — ${recipe.name}</span>\n`;
+      success++;
+    } catch (e) {
+      log.innerHTML += `<span class="err">✗ ${recipe.id} — ${recipe.name}: ${e.message}</span>\n`;
+      errors++;
     }
+    log.scrollTop = log.scrollHeight;
+    await new Promise(r => setTimeout(r, 100));
   }
-  L('\nDone. Refresh the Beck Kitchen app and check Recipes > Sauces and Breads & Doughs.');
+
+  log.innerHTML += `\n<span class="info">Done. ${success} pushed successfully. ${errors} errors.</span>`;
+  btn.textContent = 'COMPLETE';
 };
 </script>
 </body>
